@@ -32,7 +32,7 @@ The app is a **vintage national park field journal**. Maintain this on every scr
 - `--gold` `#c89a3c` — highlights, baby points
 - `--brown` `#3d2817` — body text
 
-**Fonts** (Google Fonts):
+**Fonts** (self-hosted woff2 in `fonts/`, declared via `@font-face` at the top of the `<style>` block — do not reintroduce the Google Fonts CDN; the app must work fully offline):
 - **Alfa Slab One** — display, badges, big numbers
 - **Special Elite** — typewriter labels, captions, subtitles
 - **Lora** — body text
@@ -51,11 +51,13 @@ The app is a **vintage national park field journal**. Maintain this on every scr
 
 ## Current state
 
-Functional locally. All features in `README.md` work. Not yet deployed to a live URL. Not yet tested on a real Android phone.
+Deployed and live at **https://brandonphaley.github.io/wildlife-tally/** (GitHub Pages, repo `brandonphaley/wildlife-tally`, `main` branch root). Fonts are self-hosted and precached — zero external network dependencies; the app is fully offline-capable once installed. Not yet verified on Brandon's actual Android phone.
+
+Deploying an update: commit, push to `main`, and bump `CACHE` in `sw.js` — Pages rebuilds automatically in ~1 minute.
 
 ## Roadmap (rough priority)
 
-1. **Deploy and verify** — live HTTPS URL via Netlify Drop, confirm Android Chrome install + offline + persistence.
+1. **Verify on Brandon's phone** — install from the live URL via Chrome, confirm offline use (airplane mode) + persistence.
 2. **More parks** — only Yellowstone & Grand Teton is built. Glacier is the next most time-sensitive (Brandon has a trip there in July 2026). Smokies, Olympic, Acadia are likely candidates after that. Each needs its animal preset researched and added to `PARKS`.
 3. **Trip export** — share final tally as image or PDF with the family. Versus mode standings especially are share-worthy.
 4. **Per-player attribution in team mode** — currently team mode doesn't track who spotted what. A "current spotter" toggle or per-tap attribution would add depth.
@@ -66,7 +68,7 @@ Functional locally. All features in `README.md` work. Not yet deployed to a live
 - Adding a build step or framework.
 - Changing the localStorage data shape (needs a migration).
 - Changing anything in the aesthetic system that's user-visible.
-- Adding any network request beyond the existing Google Fonts CDN (no analytics, no telemetry).
+- Adding any network request at all — the app currently makes zero (no CDN, no analytics, no telemetry) and offline use in the parks depends on that.
 
 ## Just do (no need to ask)
 

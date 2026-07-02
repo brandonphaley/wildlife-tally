@@ -10,21 +10,13 @@ A progressive web app for tracking wildlife sightings across national park trips
 - `icon-192.png` / `icon-512.png` — home screen icons
 - `CLAUDE.md` — project context for any Claude session working on this
 
-## Deploy — pick one
+## Live URL
 
-### Option A · Netlify Drop (fastest, ~2 minutes)
-1. Unzip this folder.
-2. Go to **https://app.netlify.com/drop**.
-3. Drag the unzipped folder onto the page.
-4. You get an HTTPS URL like `https://something.netlify.app`.
+**https://brandonphaley.github.io/wildlife-tally/** — GitHub Pages, served from the `main` branch root of `brandonphaley/wildlife-tally`.
 
-### Option B · GitHub Pages
-1. Create a new GitHub repo, upload all files to root.
-2. Settings → Pages → Source: `main` branch, `/ (root)`.
-3. Wait ~1 minute for the URL.
-
-### Updating after deploy
-If you redeploy a new version, **bump the cache version in `sw.js`** (change `'wildlife-tally-v2'` to `v3`, etc.) so installed devices pull the update.
+### Deploying an update
+1. Bump the cache version in `sw.js` (change `'wildlife-tally-v18'` to `v19`, etc.) so installed devices pull the update.
+2. Commit and push to `main`. Pages rebuilds automatically in about a minute.
 
 ## Install on phone
 
