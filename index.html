@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Wildlife Tally — The Field Ledger</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2b3a23">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tally">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+
+<style>
+/* Self-hosted fonts — no network dependency, required for offline use in the parks */
+@font-face {
+  font-family: 'Alfa Slab One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/alfa-slab-one-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Special Elite';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/special-elite-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('fonts/lora-400-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/lora-italic-400.woff2') format('woff2');
+}
+
+:root {
+  --cream: #f1e7d0;
+  --cream-dark: #e6d9b8;
+  --forest: #2b3a23;
+  --forest-light: #3d5230;
+  --rust: #b3551e;
+  --rust-dark: #8a4017;
+  --gold: #c89a3c;
+  --brown: #3d2817;
+  --paper: #faf3e0;
+  --shadow: rgba(61, 40, 23, 0.15);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { overscroll-behavior-y: contain; }
+body {
+  font-family: 'Lora', Georgia, serif;
+  background: var(--cream);
+  background-image:
+    radial-gradient(at 20% 30%, rgba(200, 154, 60, 0.10), transparent 50%),
+    radial-gradient(at 80% 70%, rgba(179, 85, 30, 0.10), transparent 50%);
+  color: var(--brown);
+  min-height: 100vh;
+  padding: max(20px, env(safe-area-inset-top)) 12px max(80px, env(safe-area-inset-bottom));
+  line-height: 1.5;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: 0.18; mix-blend-mode: multiply; z-index: 0;
+}
+.container { max-width: 720px; margin: 0 auto; position: relative; z-index: 1; }
+.view { display: none; }
+.view.active { display: block; }
+
+.app-header { text-align: center; padding: 12px 16px 24px; border-bottom: 3px double var(--forest); margin-bottom: 22px; }
+.app-header .subtitle { font-family: 'Special Elite', monospace; font-size: 11px; letter-spacing: 0.35em; color: var(--rust); text-transform: uppercase; margin-bottom: 10px; }
+.app-header h1 { font-family: 'Alfa Slab One', serif; font-size: clamp(30px, 9vw, 48px); color: var(--forest); line-height: 0.95; letter-spacing: -0.02em; text-shadow: 2px 2px 0 var(--cream-dark); }
+.app-header .tag { font-family: 'Special Elite', monospace; font-size: 12px; letter-spacing: 0.22em; margin-top: 12px; color: var(--brown); }
+.app-header .ornament { font-family: 'Special Elite', monospace; color: var(--forest-light); font-size: 14px; margin-top: 6px; letter-spacing: 0.5em; }
+
+.sub-header { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid var(--forest); }
+.sub-header h2 { font-family: 'Alfa Slab One', serif; font-size: 22px; color: var(--forest); flex: 1; }
+.back-btn { font-family: 'Special Elite', monospace; background: transparent; border: 1.5px solid var(--forest); color: var(--forest); font-size: 12px; padding: 6px 12px; border-radius: 2px; cursor: pointer; letter-spacing: 0.1em; }
+.back-btn:hover { background: var(--forest); color: var(--paper); }
+
+.primary-btn { font-family: 'Alfa Slab One', serif; background: var(--forest); color: var(--paper); border: 2px solid var(--forest); padding: 14px 24px; border-radius: 3px; font-size: 15px; letter-spacing: 0.06em; cursor: pointer; box-shadow: 3px 3px 0 var(--brown); transition: transform 0.1s, box-shadow 0.1s; width: 100%; display: block; }
+.primary-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--brown); }
+.secondary-btn { font-family: 'Special Elite', monospace; background: transparent; border: 1.5px solid var(--forest-light); color: var(--forest-light); padding: 9px 16px; border-radius: 2px; font-size: 12px; letter-spacing: 0.18em; cursor: pointer; text-transform: uppercase; }
+.secondary-btn:hover { background: var(--forest); color: var(--paper); border-color: var(--forest); }
+.danger-btn { font-family: 'Special Elite', monospace; background: transparent; border: 1.5px solid var(--rust); color: var(--rust); padding: 9px 16px; border-radius: 2px; font-size: 12px; letter-spacing: 0.18em; cursor: pointer; text-transform: uppercase; }
+.danger-btn:hover { background: var(--rust); color: var(--paper); }
+
+.action-row { margin-bottom: 22px; }
+.empty-state { text-align: center; padding: 40px 20px; background: var(--paper); border: 2px dashed var(--forest-light); border-radius: 4px; }
+.empty-state .icon { font-family: 'Alfa Slab One', serif; font-size: 40px; color: var(--forest-light); letter-spacing: 0.15em; margin-bottom: 10px; }
+.empty-state p { font-family: 'Special Elite', monospace; font-size: 13px; color: var(--brown); line-height: 1.6; }
+.section-label { font-family: 'Special Elite', monospace; font-size: 11px; letter-spacing: 0.3em; color: var(--rust); text-transform: uppercase; margin: 24px 0 12px; }
+
+.trip-card { background: var(--paper); border: 1.5px solid var(--forest); border-radius: 3px; margin-bottom: 12px; padding: 14px 16px; box-shadow: 2px 2px 0 var(--forest); cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
+.trip-card:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--forest); }
+.trip-card .journal-num { font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.25em; color: var(--rust); text-transform: uppercase; }
+.trip-card .park-name { font-family: 'Alfa Slab One', serif; font-size: 18px; color: var(--forest); margin: 4px 0 6px; line-height: 1.1; }
+.trip-card .meta { font-family: 'Special Elite', monospace; font-size: 11px; color: var(--brown); opacity: 0.85; line-height: 1.5; }
+.trip-card .meta .dot { color: var(--gold); padding: 0 4px; }
+.trip-card .status { font-family: 'Alfa Slab One', serif; font-size: 14px; color: var(--rust); margin-top: 6px; }
+.trip-card .mode-badge { display: inline-block; font-family: 'Special Elite', monospace; font-size: 9px; letter-spacing: 0.2em; padding: 2px 6px; background: var(--forest); color: var(--paper); border-radius: 2px; text-transform: uppercase; margin-right: 6px; }
+.trip-card .mode-badge.versus { background: var(--rust); }
+.trip-card .mode-badge.fantasy { background: var(--gold); color: var(--brown); }
+
+.form-section { background: var(--paper); border: 1.5px solid var(--forest); border-radius: 3px; padding: 16px; margin-bottom: 16px; box-shadow: 2px 2px 0 var(--forest); }
+.form-section .section-title { font-family: 'Alfa Slab One', serif; font-size: 14px; color: var(--forest); letter-spacing: 0.04em; padding: 0 6px; background: var(--paper); margin-bottom: 8px; display: inline-block; }
+.form-section .helper { font-family: 'Special Elite', monospace; font-size: 11px; color: var(--brown); opacity: 0.75; margin-bottom: 12px; }
+label.field { display: block; margin-bottom: 10px; }
+label.field > .label { display: block; font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.22em; color: var(--forest-light); text-transform: uppercase; margin-bottom: 4px; }
+input[type=text], input[type=number], input[type=date], select { width: 100%; font-family: 'Lora', serif; font-size: 15px; padding: 9px 11px; border: 1.5px solid var(--forest-light); background: var(--cream); color: var(--brown); border-radius: 2px; outline: none; }
+input:focus, select:focus { border-color: var(--rust); }
+
+.mode-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mode-toggle.three { grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width: 460px) { .mode-toggle.three { grid-template-columns: 1fr; } }
+.mode-toggle label { position: relative; cursor: pointer; }
+.mode-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.mode-toggle .pill { display: block; padding: 12px 8px; text-align: center; border: 1.5px solid var(--forest-light); border-radius: 3px; background: var(--cream); font-family: 'Alfa Slab One', serif; font-size: 13px; color: var(--forest-light); letter-spacing: 0.04em; }
+.mode-toggle .pill small { display: block; font-family: 'Special Elite', monospace; font-size: 9px; letter-spacing: 0.15em; margin-top: 3px; opacity: 0.7; font-weight: normal; }
+.mode-toggle input:checked + .pill { background: var(--forest); color: var(--paper); border-color: var(--forest); }
+
+.days-control { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 10px; }
+.days-stepper { display: flex; align-items: stretch; background: var(--cream); border: 1.5px solid var(--forest-light); border-radius: 2px; }
+.days-stepper button { font-family: 'Alfa Slab One', serif; background: transparent; border: none; width: 36px; font-size: 18px; cursor: pointer; color: var(--forest); }
+.days-stepper button:active { background: var(--gold); }
+.days-stepper input { border: none; background: transparent; text-align: center; width: 50px; font-family: 'Alfa Slab One', serif; font-size: 18px; color: var(--forest); padding: 6px 0; }
+.date-preview { font-family: 'Special Elite', monospace; font-size: 11px; color: var(--brown); background: var(--cream); padding: 8px 10px; border: 1px dashed var(--forest-light); border-radius: 2px; margin-top: 8px; line-height: 1.6; }
+
+.players-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.player-row { display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: center; }
+.player-row .remove { width: 32px; height: 36px; border: 1.5px solid var(--rust); background: transparent; color: var(--rust); font-family: 'Alfa Slab One', serif; font-size: 14px; border-radius: 2px; cursor: pointer; }
+.player-row .remove:hover { background: var(--rust); color: var(--paper); }
+.player-row.solo .remove { opacity: 0.3; pointer-events: none; }
+
+.versus-row { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 8px; align-items: center; margin-bottom: 8px; padding: 8px 10px; background: var(--cream); border: 1px dashed var(--forest-light); border-radius: 2px; }
+.versus-row .name { font-family: 'Alfa Slab One', serif; font-size: 14px; color: var(--forest); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.animal-editor { margin-top: 8px; display: none; }
+.animal-editor.open { display: block; }
+.animal-edit-row { display: grid; grid-template-columns: minmax(0, 1fr) 60px 32px; gap: 6px; margin-bottom: 6px; align-items: center; }
+.animal-edit-row input[type=text] { font-size: 13px; padding: 7px 9px; }
+.animal-edit-row input[type=number] { font-size: 13px; padding: 7px 6px; text-align: center; }
+.animal-edit-row .remove { width: 32px; height: 34px; border: 1.5px solid var(--rust); background: transparent; color: var(--rust); font-family: 'Alfa Slab One', serif; font-size: 13px; border-radius: 2px; cursor: pointer; }
+.animal-edit-row .remove:hover { background: var(--rust); color: var(--paper); }
+.animal-edit-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.animal-summary { font-family: 'Special Elite', monospace; font-size: 12px; color: var(--brown); display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
+.animal-summary button { font-family: 'Special Elite', monospace; background: none; border: none; color: var(--rust); cursor: pointer; font-size: 11px; letter-spacing: 0.18em; text-decoration: underline; text-transform: uppercase; }
+
+.scorecard { background: var(--paper); border: 2px solid var(--forest); border-radius: 4px; padding: 22px 18px 18px; margin-bottom: 22px; position: relative; box-shadow: 0 4px 0 var(--forest), 0 7px 14px var(--shadow); }
+.scorecard::before { content: 'OFFICIAL FIELD COUNT'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--rust); color: var(--paper); font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.3em; padding: 3px 14px; white-space: nowrap; }
+.scorecard.goal-met { background: linear-gradient(135deg, #fff5d6, var(--paper)); border-color: var(--rust); animation: celebrate 0.7s ease; }
+.scorecard.goal-met::before { content: '★ GOAL ACHIEVED ★'; background: var(--forest); }
+@keyframes celebrate { 0%,100%{transform:scale(1);} 40%{transform:scale(1.02) rotate(-0.4deg);} 70%{transform:scale(1.01) rotate(0.3deg);} }
+.score-display { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; gap: 12px; }
+.score-label { font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--forest-light); }
+.score-value { font-family: 'Alfa Slab One', serif; font-size: 46px; color: var(--forest); line-height: 0.9; margin-top: 4px; }
+.score-value .total-of { font-family: 'Lora', serif; font-size: 18px; opacity: 0.55; }
+.status-badge { font-family: 'Alfa Slab One', serif; font-size: 13px; color: var(--rust); text-align: right; letter-spacing: 0.06em; margin-top: 4px; }
+.progress-track { height: 14px; background: var(--cream-dark); border: 1px solid var(--forest); border-radius: 7px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--rust)); width: 0%; transition: width 0.4s ease; position: relative; }
+.progress-fill::after { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.18) 0 4px, transparent 4px 8px); }
+
+.day-totals { display: grid; gap: 8px; margin-top: 14px; }
+.day-total { text-align: center; padding: 7px 4px; background: var(--cream); border: 1px dashed var(--forest-light); border-radius: 3px; }
+.day-total .label { font-family: 'Special Elite', monospace; font-size: 9px; letter-spacing: 0.22em; color: var(--forest-light); text-transform: uppercase; }
+.day-total .num { font-family: 'Alfa Slab One', serif; font-size: 22px; color: var(--forest); margin-top: 1px; line-height: 1; }
+
+.tally-grid-wrap { border: 1.5px solid var(--forest); border-radius: 3px; background: var(--paper); overflow-x: auto; box-shadow: 2px 2px 0 var(--forest); }
+.tally-grid { display: grid; min-width: 100%; }
+.tally-grid .grid-header, .tally-grid .grid-row { display: grid; gap: 1px; background: var(--forest-light); }
+.tally-grid .grid-header > div, .tally-grid .grid-row > div { background: var(--paper); padding: 8px 6px; }
+.tally-grid .grid-header > div { font-family: 'Special Elite', monospace; font-size: 9px; letter-spacing: 0.18em; color: var(--rust); text-transform: uppercase; text-align: center; padding: 8px 4px; }
+.tally-grid .grid-header .creature-h, .tally-grid .grid-row .creature-c { text-align: left; padding-left: 10px; }
+
+.creature-c .animal-name { font-family: 'Alfa Slab One', serif; font-size: 14px; color: var(--forest); line-height: 1.1; }
+.creature-c .animal-sub { font-family: 'Special Elite', monospace; font-size: 9px; color: var(--brown); opacity: 0.7; margin-top: 1px; }
+.creature-c .pts-row { display: flex; gap: 3px; margin-top: 4px; flex-wrap: wrap; }
+.pt-badge { display: inline-block; background: var(--forest); color: var(--paper); font-family: 'Alfa Slab One', serif; font-size: 8px; padding: 2px 5px; border-radius: 2px; letter-spacing: 0.04em; line-height: 1.3; }
+.pt-badge.baby { background: var(--gold); color: var(--brown); }
+.pt-badge.high { background: var(--rust); }
+.pt-badge.mythical { background: linear-gradient(135deg, var(--gold), var(--rust)); color: var(--paper); }
+
+.day-cell { display: flex; flex-direction: column; gap: 3px; padding: 5px !important; background: var(--cream) !important; }
+.tally-line { display: flex; align-items: center; justify-content: space-between; gap: 2px; font-family: 'Special Elite', monospace; font-size: 10px; }
+.tally-line .ab { color: var(--forest-light); font-weight: bold; font-size: 9px; width: 8px; }
+.tally-line.baby .ab { color: var(--rust); }
+.tally-line .ctrls { display: flex; align-items: center; gap: 2px; }
+.tally-btn { width: 20px; height: 22px; border: 1px solid var(--forest); background: var(--paper); color: var(--forest); font-family: 'Alfa Slab One', serif; font-size: 12px; border-radius: 2px; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; touch-action: manipulation; user-select: none; -webkit-tap-highlight-color: transparent; }
+.tally-btn:active { transform: scale(0.88); background: var(--gold); }
+.tally-btn.disabled { opacity: 0.3; pointer-events: none; }
+.tally-num { font-family: 'Alfa Slab One', serif; font-size: 13px; color: var(--forest); min-width: 14px; text-align: center; }
+.tally-line.baby .tally-num { color: var(--rust); }
+
+.standings { background: var(--paper); border: 2px solid var(--forest); border-radius: 4px; padding: 18px; margin-bottom: 22px; position: relative; box-shadow: 0 4px 0 var(--forest), 0 7px 14px var(--shadow); }
+.standings::before { content: 'STANDINGS'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--rust); color: var(--paper); font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.3em; padding: 3px 14px; }
+.standing-row { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--cream-dark); }
+.standing-row:last-child { border-bottom: none; }
+.standing-row .rank { font-family: 'Alfa Slab One', serif; font-size: 22px; color: var(--rust); text-align: center; line-height: 1; }
+.standing-row.first .rank { color: var(--gold); text-shadow: 1px 1px 0 var(--brown); }
+.standing-row .who { font-family: 'Alfa Slab One', serif; font-size: 15px; color: var(--forest); }
+.standing-row .team-tag { font-family: 'Special Elite', monospace; font-size: 10px; color: var(--brown); opacity: 0.75; margin-top: 1px; letter-spacing: 0.05em; }
+.standing-row .score { font-family: 'Alfa Slab One', serif; font-size: 22px; color: var(--forest); line-height: 1; }
+.standing-row .score small { font-family: 'Lora', serif; font-size: 11px; opacity: 0.6; }
+
+.player-card { background: var(--paper); border: 1.5px solid var(--forest); border-radius: 3px; margin-bottom: 14px; padding: 14px 14px 10px; box-shadow: 2px 2px 0 var(--forest); }
+.player-card .top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; gap: 10px; }
+.player-card .who-block .player-name { font-family: 'Alfa Slab One', serif; font-size: 18px; color: var(--forest); line-height: 1; }
+.player-card .who-block .team { font-family: 'Special Elite', monospace; font-size: 11px; color: var(--rust); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px; }
+.player-card .pts-row { margin-top: 6px; display: flex; gap: 4px; flex-wrap: wrap; }
+.player-card .player-score { font-family: 'Alfa Slab One', serif; font-size: 30px; color: var(--forest); line-height: 1; text-align: right; }
+.player-card .player-score small { font-family: 'Lora', serif; font-size: 11px; opacity: 0.55; display: block; margin-top: 2px; }
+
+.day-tally-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: 8px; align-items: center; padding: 7px 0; border-top: 1px dashed var(--cream-dark); }
+.day-tally-row .date-label { font-family: 'Special Elite', monospace; font-size: 11px; color: var(--brown); letter-spacing: 0.08em; }
+.day-tally-row .ab-block { display: flex; align-items: center; gap: 2px; background: var(--cream); padding: 3px 5px; border-radius: 2px; border: 1px solid var(--forest-light); }
+.day-tally-row .ab-block .lbl { font-family: 'Special Elite', monospace; font-size: 9px; color: var(--forest-light); font-weight: bold; margin-right: 2px; }
+.day-tally-row .ab-block.b .lbl { color: var(--rust); }
+.day-tally-row .day-score { font-family: 'Alfa Slab One', serif; font-size: 13px; color: var(--forest); min-width: 28px; text-align: right; }
+
+.danger-zone { margin-top: 30px; padding-top: 20px; border-top: 2px dashed var(--forest-light); text-align: center; }
+.field-rules { background: var(--paper); border: 2px dashed var(--forest); padding: 14px 16px; margin-top: 22px; border-radius: 4px; }
+.field-rules h3 { font-family: 'Alfa Slab One', serif; font-size: 14px; color: var(--forest); margin-bottom: 8px; letter-spacing: 0.04em; }
+.field-rules ul { list-style: none; font-family: 'Special Elite', monospace; font-size: 11px; color: var(--brown); line-height: 1.55; }
+.field-rules li { padding: 2px 0; padding-left: 16px; position: relative; }
+.field-rules li::before { content: '◆'; position: absolute; left: 0; color: var(--rust); font-size: 8px; top: 7px; }
+.install-area { text-align: center; margin-top: 14px; display: none; }
+.install-area.visible { display: block; }
+
+/* --- Tally/Summary toggle --- */
+.view-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+.view-toggle button { font-family: 'Special Elite', monospace; text-transform: uppercase; letter-spacing: 0.2em; font-size: 12px; padding: 11px 8px; border: 1.5px solid var(--forest); background: var(--cream); color: var(--forest); border-radius: 2px; cursor: pointer; }
+.view-toggle button.active { background: var(--forest); color: var(--paper); box-shadow: 2px 2px 0 var(--brown); }
+
+/* --- Day pills --- */
+.day-pills { display: flex; gap: 7px; overflow-x: auto; padding: 2px 2px 8px; margin-bottom: 18px; -webkit-overflow-scrolling: touch; }
+.day-pill { flex: 0 0 auto; font-family: 'Special Elite', monospace; font-size: 11px; letter-spacing: 0.06em; padding: 8px 12px; border: 1.5px solid var(--forest-light); background: var(--paper); color: var(--forest); border-radius: 2px; cursor: pointer; text-align: center; line-height: 1.35; min-width: 66px; }
+.day-pill .d-num { font-family: 'Alfa Slab One', serif; font-size: 13px; display: block; }
+.day-pill .d-score { display: block; font-size: 9px; opacity: 0.75; margin-top: 1px; }
+.day-pill.active { background: var(--rust); color: var(--paper); border-color: var(--rust); box-shadow: 2px 2px 0 var(--brown); }
+
+/* --- Compact running total (tally screen) --- */
+.scorecard.compact { padding: 20px 16px 14px; margin-bottom: 18px; }
+.scorecard.compact .score-value { font-size: 38px; }
+
+/* --- Big tally controls (single-day entry) --- */
+.tally-day-card { background: var(--paper); border: 1.5px solid var(--forest); border-radius: 3px; padding: 14px; margin-bottom: 12px; box-shadow: 2px 2px 0 var(--forest); }
+.tally-day-card .animal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
+.tally-day-card .animal-name { font-family: 'Alfa Slab One', serif; font-size: 18px; color: var(--forest); line-height: 1.1; }
+.tally-day-card .animal-sub { font-family: 'Special Elite', monospace; font-size: 10px; color: var(--brown); opacity: 0.7; margin-top: 2px; }
+.tally-day-card .team { font-family: 'Special Elite', monospace; font-size: 11px; color: var(--rust); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px; }
+.tally-day-card .player-score { font-family: 'Alfa Slab One', serif; font-size: 26px; color: var(--forest); line-height: 1; text-align: right; }
+.tally-day-card .player-score small { font-family: 'Lora', serif; font-size: 10px; opacity: 0.55; display: block; margin-top: 2px; }
+.tally-day-card .day-score-line { font-family: 'Special Elite', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--forest-light); text-transform: uppercase; text-align: right; margin-top: 10px; }
+.big-tally-row { display: grid; grid-template-columns: 58px 1fr; gap: 10px; align-items: center; margin-top: 8px; }
+.big-tally-row .ab-label { font-family: 'Special Elite', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--forest-light); }
+.big-tally-row.baby .ab-label { color: var(--rust); }
+.big-ctrls { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; }
+.big-tally-btn { height: 52px; border: 2px solid var(--forest); background: var(--cream); color: var(--forest); font-family: 'Alfa Slab One', serif; font-size: 26px; border-radius: 3px; cursor: pointer; box-shadow: 2px 2px 0 var(--brown); touch-action: manipulation; user-select: none; -webkit-tap-highlight-color: transparent; display: flex; align-items: center; justify-content: center; }
+.big-tally-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--brown); background: var(--gold); }
+.big-tally-btn.disabled { opacity: 0.3; pointer-events: none; }
+.big-tally-num { font-family: 'Alfa Slab One', serif; font-size: 30px; color: var(--forest); min-width: 40px; text-align: center; }
+.big-tally-row.baby .big-tally-num { color: var(--rust); }
+
+/* --- Read-only summary grid cells --- */
+.day-cell.ro { gap: 2px; align-items: center; }
+.day-cell.ro .ro-line { display: flex; align-items: center; justify-content: center; gap: 4px; font-family: 'Special Elite', monospace; font-size: 11px; color: var(--forest-light); }
+.day-cell.ro .ro-line.baby { color: var(--rust); }
+.day-cell.ro .ro-line .ab { font-weight: bold; font-size: 9px; }
+.day-cell.ro .ro-n { font-family: 'Alfa Slab One', serif; font-size: 14px; color: var(--forest); }
+.day-cell.ro .ro-line.baby .ro-n { color: var(--rust); }
+.day-cell.ro .ro-pts { text-align: center; font-family: 'Alfa Slab One', serif; font-size: 12px; color: var(--gold); border-top: 1px dashed var(--forest-light); margin-top: 2px; padding-top: 2px; }
+
+/* --- Fantasy team setup --- */
+.team-name-row { display: grid; grid-template-columns: 64px 1fr; gap: 8px; align-items: center; margin-bottom: 8px; }
+.team-name-row .chip { font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; text-align: center; padding: 7px 4px; border-radius: 2px; color: var(--paper); }
+.fantasy-assign-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 8px; align-items: center; margin-bottom: 8px; padding: 8px 10px; background: var(--cream); border: 1px dashed var(--forest-light); border-radius: 2px; }
+.fantasy-assign-row .name { font-family: 'Alfa Slab One', serif; font-size: 14px; color: var(--forest); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* --- Team color accents (fantasy) --- */
+.tc0 { background: var(--forest); }
+.tc1 { background: var(--rust); }
+.tc2 { background: var(--gold); color: var(--brown) !important; }
+.tc3 { background: var(--forest-light); }
+.tc4 { background: var(--rust-dark); }
+.tc5 { background: var(--brown); }
+
+/* --- Draft screen --- */
+.draft-banner { background: var(--paper); border: 2px solid var(--forest); border-radius: 4px; padding: 20px 16px 16px; margin-bottom: 18px; position: relative; box-shadow: 0 4px 0 var(--forest), 0 7px 14px var(--shadow); text-align: center; }
+.draft-banner::before { content: 'THE DRAFT'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--rust); color: var(--paper); font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.3em; padding: 3px 14px; }
+.draft-banner .round-label { font-family: 'Special Elite', monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--forest-light); }
+.draft-banner .on-the-clock { font-family: 'Alfa Slab One', serif; font-size: 26px; line-height: 1.05; margin: 6px 0 4px; }
+.draft-banner .pick-meta { font-family: 'Special Elite', monospace; font-size: 11px; color: var(--brown); opacity: 0.8; letter-spacing: 0.06em; }
+.draft-banner .draft-actions { margin-top: 12px; display: flex; gap: 8px; justify-content: center; }
+.draft-pick-list { display: grid; gap: 8px; margin-bottom: 18px; }
+.draft-pick-btn { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; text-align: left; background: var(--paper); border: 1.5px solid var(--forest); border-radius: 3px; padding: 11px 14px; cursor: pointer; box-shadow: 2px 2px 0 var(--forest); transition: transform 0.1s, box-shadow 0.1s; }
+.draft-pick-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--forest); background: var(--gold); }
+.draft-pick-btn .an { font-family: 'Alfa Slab One', serif; font-size: 16px; color: var(--forest); }
+.draft-pick-btn .sub { font-family: 'Special Elite', monospace; font-size: 9px; color: var(--brown); opacity: 0.7; margin-top: 1px; }
+.draft-roster { background: var(--paper); border: 1.5px solid var(--forest); border-radius: 3px; padding: 12px 14px; margin-bottom: 12px; box-shadow: 2px 2px 0 var(--forest); }
+.draft-roster .roster-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.draft-roster .roster-head .badge { font-family: 'Special Elite', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; color: var(--paper); }
+.draft-roster .roster-head .nm { font-family: 'Alfa Slab One', serif; font-size: 15px; color: var(--forest); }
+.draft-roster .roster-head .who { font-family: 'Special Elite', monospace; font-size: 10px; color: var(--brown); opacity: 0.75; }
+.draft-roster .picks { display: flex; flex-wrap: wrap; gap: 5px; }
+.draft-roster .pick-tag { font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.04em; background: var(--cream); border: 1px solid var(--forest-light); border-radius: 2px; padding: 3px 7px; color: var(--brown); }
+.draft-roster .pick-tag .pp { color: var(--rust); font-weight: bold; }
+.draft-roster .empty-pick { font-family: 'Special Elite', monospace; font-size: 10px; color: var(--brown); opacity: 0.5; font-style: italic; }
+.owner-tag { font-family: 'Special Elite', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; color: var(--paper); display: inline-block; margin-top: 4px; }
+
+@media (max-width: 520px) {
+  .score-value { font-size: 38px; }
+  .day-total .num { font-size: 18px; }
+  .tally-btn { width: 18px; height: 22px; font-size: 11px; }
+  .tally-num { font-size: 12px; min-width: 12px; }
+  .tally-line { font-size: 9px; }
+  .creature-c .animal-name { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <section class="view active" id="view-home">
+    <header class="app-header">
+      <div class="subtitle">The Field Ledger</div>
+      <h1>Wildlife Tally</h1>
+      <div class="ornament">— ◆ —</div>
+      <div class="tag">A NATIONAL PARKS TRACKER</div>
+    </header>
+    <div class="action-row">
+      <button class="primary-btn" id="newTripBtn">+ Begin New Journal</button>
+    </div>
+    <div id="tripsContainer"></div>
+  </section>
+
+  <section class="view" id="view-new">
+    <div class="sub-header">
+      <button class="back-btn" data-back>← Back</button>
+      <h2>New Journal</h2>
+    </div>
+    <div class="form-section">
+      <div class="section-title">Park</div>
+      <select id="parkSelect"></select>
+      <div class="helper">Recommended animals will be loaded for this park.</div>
+    </div>
+    <div class="form-section">
+      <div class="section-title">How are you playing?</div>
+      <div class="mode-toggle three">
+        <label><input type="radio" name="mode" value="team" checked><span class="pill">Team<small>One shared goal</small></span></label>
+        <label><input type="radio" name="mode" value="versus"><span class="pill">Pick an Animal<small>Your own animal</small></span></label>
+        <label><input type="radio" name="mode" value="fantasy"><span class="pill">Fantasy Team<small>Draft a roster</small></span></label>
+      </div>
+    </div>
+    <div class="form-section" id="goalSection">
+      <label class="field">
+        <span class="label">Goal Points</span>
+        <input type="number" id="goalInput" value="45" min="1" max="9999">
+      </label>
+    </div>
+    <div class="form-section">
+      <div class="section-title">Dates</div>
+      <div class="days-control">
+        <label class="field" style="margin:0;">
+          <span class="label">Start Date</span>
+          <input type="date" id="startDate">
+        </label>
+        <label class="field" style="margin:0;">
+          <span class="label">Days</span>
+          <div class="days-stepper">
+            <button type="button" id="daysDown">−</button>
+            <input type="number" id="daysCount" value="3" min="1" max="10" readonly>
+            <button type="button" id="daysUp">+</button>
+          </div>
+        </label>
+      </div>
+      <div class="date-preview" id="datePreview"></div>
+    </div>
+    <div class="form-section">
+      <div class="section-title">Players</div>
+      <div class="helper">Up to 6. Tap × to remove.</div>
+      <div class="players-list" id="playersList"></div>
+      <button type="button" class="secondary-btn" id="addPlayerBtn">+ Add Player</button>
+    </div>
+    <div class="form-section" id="versusSection" style="display:none;">
+      <div class="section-title">Pick Animals</div>
+      <div class="helper">Each player picks one animal — only that animal counts for their score. Two players can pick the same animal.</div>
+      <div id="versusPickList"></div>
+    </div>
+    <div class="form-section" id="fantasySection" style="display:none;">
+      <div class="section-title">Fantasy Teams</div>
+      <div class="helper">Group players into teams. Each team drafts its own roster of animals, then every sighting scores for whichever team owns that animal.</div>
+      <label class="field" style="margin-bottom:14px;">
+        <span class="label">Number of Teams</span>
+        <div class="days-stepper" style="width:fit-content;">
+          <button type="button" id="teamsDown">−</button>
+          <input type="number" id="teamsCount" value="2" min="2" max="6" readonly>
+          <button type="button" id="teamsUp">+</button>
+        </div>
+      </label>
+      <div id="fantasyTeamNames"></div>
+      <div class="section-title" style="margin-top:6px;">Assign Players</div>
+      <div id="fantasyAssignList"></div>
+    </div>
+    <div class="form-section">
+      <div class="section-title">Animals & Points</div>
+      <div class="animal-summary">
+        <span id="animalSummaryText">— animals loaded</span>
+        <button type="button" id="toggleAnimalEditor">Edit ↓</button>
+      </div>
+      <div class="animal-editor" id="animalEditor">
+        <div class="helper">Baby points are always +1 over adult.</div>
+        <div id="animalEditList"></div>
+        <div class="animal-edit-actions">
+          <button type="button" class="secondary-btn" id="addAnimalBtn">+ Add Animal</button>
+          <button type="button" class="secondary-btn" id="resetAnimalsBtn">↻ Reset to Preset</button>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="primary-btn" id="startTripBtn">Begin Trip</button>
+  </section>
+
+  <section class="view" id="view-trip">
+    <div class="sub-header">
+      <button class="back-btn" data-back>← Back</button>
+      <h2 id="tripParkName"></h2>
+    </div>
+    <div id="tripBody"></div>
+    <div class="danger-zone">
+      <button class="danger-btn" id="deleteTripBtn">Delete This Journal</button>
+    </div>
+  </section>
+
+  <div class="install-area" id="installArea">
+    <button class="secondary-btn" id="installBtn">↓ Install App</button>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+const PARKS = {
+  'yellowstone-teton': {
+    id: 'yellowstone-teton',
+    name: 'Yellowstone & Grand Teton',
+    region: 'Wyoming / Montana',
+    defaultGoal: 45,
+    animals: [
+      { id: 'mythical',     name: 'Mythical',                 subtitle: 'Wolverine / Mt. Lion / Lynx',         points: 15 },
+      { id: 'wolf',         name: 'Wolf',                     subtitle: '',                                    points: 8  },
+      { id: 'pinemarten',   name: 'Pine Marten',              subtitle: '',                                    points: 6  },
+      { id: 'moose',        name: 'Moose',                    subtitle: '',                                    points: 5  },
+      { id: 'mtngoat',      name: 'Mountain Goat',            subtitle: '',                                    points: 4  },
+      { id: 'foxcoyote',    name: 'Fox / Coyote',             subtitle: '',                                    points: 4  },
+      { id: 'bear',         name: 'Bear',                     subtitle: 'Grizzly or Black',                    points: 3  },
+      { id: 'obb',          name: 'Otter / Beaver / Badger',  subtitle: '',                                    points: 3  },
+      { id: 'bighorn',      name: 'Bighorn Sheep',            subtitle: '',                                    points: 2  },
+      { id: 'harlequin',    name: 'Harlequin Duck',           subtitle: '',                                    points: 2  },
+      { id: 'eos',          name: 'Eagle / Osprey / Swan',    subtitle: 'Bald eagle, osprey, trumpeter swan',  points: 2  },
+      { id: 'mpc',          name: 'Marmot / Pika / Crane',    subtitle: 'Marmot, pika, sandhill crane',        points: 1  },
+      { id: 'bisonelk',     name: 'Bison / Elk',              subtitle: 'Adults free — babies only',           points: 0  }
+    ]
+  },
+  'glacier': {
+    id: 'glacier',
+    name: 'Glacier',
+    region: 'Montana',
+    defaultGoal: 45,
+    animals: [
+      { id: 'mythical',     name: 'Mythical',                 subtitle: 'Wolverine / Mt. Lion / Lynx',         points: 15 },
+      { id: 'wolf',         name: 'Wolf',                     subtitle: '',                                    points: 8  },
+      { id: 'pinemarten',   name: 'Pine Marten',              subtitle: '',                                    points: 6  },
+      { id: 'moose',        name: 'Moose',                    subtitle: 'Many Glacier — Fishercap',            points: 5  },
+      { id: 'ptarmigan',    name: 'White-tailed Ptarmigan',   subtitle: 'Alpine — Logan Pass / Hidden Lake',   points: 5  },
+      { id: 'grizzly',      name: 'Grizzly Bear',             subtitle: 'Many Glacier',                        points: 4  },
+      { id: 'foxcoyote',    name: 'Fox / Coyote',             subtitle: '',                                    points: 4  },
+      { id: 'harlequin',    name: 'Harlequin Duck',           subtitle: 'McDonald Creek',                      points: 3  },
+      { id: 'blackbear',    name: 'Black Bear',               subtitle: '',                                    points: 3  },
+      { id: 'obb',          name: 'Otter / Beaver / Badger',  subtitle: '',                                    points: 3  },
+      { id: 'mtngoat',      name: 'Mountain Goat',            subtitle: 'Logan Pass',                          points: 2  },
+      { id: 'bighorn',      name: 'Bighorn Sheep',            subtitle: 'Logan Pass',                          points: 2  },
+      { id: 'eo',           name: 'Eagle / Osprey',           subtitle: 'Bald, golden, osprey',                points: 2  },
+      { id: 'marmotpika',   name: 'Marmot / Pika',            subtitle: 'Hoary marmot, pika',                  points: 1  },
+      { id: 'deerelk',      name: 'Deer / Elk',               subtitle: 'Adults free — babies only',           points: 0  }
+    ]
+  },
+  'smokies': {
+    id: 'smokies',
+    name: 'Great Smoky Mountains',
+    region: 'Tennessee / North Carolina',
+    defaultGoal: 45,
+    animals: [
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Nocturnal — rarely seen',             points: 10 },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Newfound Gap',                        points: 8  },
+      { id: 'otter',        name: 'River Otter',              subtitle: '',                                    points: 6  },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Cades Cove',                          points: 5  },
+      { id: 'foxcoyote',    name: 'Fox / Coyote',             subtitle: 'Red & gray fox, coyote',              points: 4  },
+      { id: 'grouse',       name: 'Ruffed Grouse',            subtitle: 'Cades Cove',                          points: 4  },
+      { id: 'elk',          name: 'Elk',                      subtitle: 'Cataloochee / Oconaluftee',           points: 3  },
+      { id: 'owlraven',     name: 'Owl / Raven',              subtitle: 'Saw-whet owl, common raven',          points: 3  },
+      { id: 'deer',         name: 'White-tailed Deer',        subtitle: '',                                    points: 2  },
+      { id: 'raccoon',      name: 'Raccoon / Groundhog',      subtitle: '',                                    points: 1  },
+      { id: 'turkey',       name: 'Wild Turkey',              subtitle: '',                                    points: 1  }
+    ]
+  },
+  'everglades': {
+    id: 'everglades',
+    name: 'Everglades',
+    region: 'Florida',
+    defaultGoal: 45,
+    animals: [
+      { id: 'panther',      name: 'Florida Panther',          subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'snailkite',    name: 'Snail Kite',               subtitle: 'Endangered — Shark Valley',           points: 8  },
+      { id: 'crocodile',    name: 'American Crocodile',       subtitle: 'Flamingo / Florida Bay',              points: 6  },
+      { id: 'manatee',      name: 'West Indian Manatee',      subtitle: 'Flamingo',                            points: 5  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Shy & nocturnal',                     points: 5  },
+      { id: 'spoonbill',    name: 'Roseate Spoonbill',        subtitle: 'Pink wader',                          points: 4  },
+      { id: 'otter',        name: 'River Otter',              subtitle: 'Nocturnal',                           points: 4  },
+      { id: 'dolphin',      name: 'Bottlenose Dolphin',       subtitle: 'Florida Bay',                         points: 3  },
+      { id: 'reddishegret', name: 'Reddish Egret',            subtitle: 'Coastal flats',                       points: 3  },
+      { id: 'woodstork',    name: 'Wood Stork',               subtitle: 'Low-water concentrations',            points: 3  },
+      { id: 'deer',         name: 'White-tailed Deer',        subtitle: '',                                    points: 2  },
+      { id: 'wading',       name: 'Wading Birds',             subtitle: 'Heron, egret, ibis, anhinga',         points: 1  },
+      { id: 'gator',        name: 'American Alligator',       subtitle: 'Everywhere',                          points: 1  },
+      { id: 'raccoon',      name: 'Raccoon / Marsh Rabbit',   subtitle: '',                                    points: 1  }
+    ]
+  },
+  'zion': {
+    id: 'zion',
+    name: 'Zion',
+    region: 'Utah',
+    defaultGoal: 45,
+    animals: [
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'condor',       name: 'California Condor',         subtitle: 'Angels Landing / Kolob',              points: 10 },
+      { id: 'spottedowl',   name: 'Mexican Spotted Owl',      subtitle: 'Threatened — narrow canyons',         points: 8  },
+      { id: 'ringtail',     name: 'Ringtail',                 subtitle: 'Nocturnal',                           points: 6  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
+      { id: 'fox',          name: 'Gray / Kit Fox',           subtitle: 'Mostly nocturnal',                    points: 4  },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Cliff nester',                        points: 4  },
+      { id: 'bighorn',      name: 'Desert Bighorn Sheep',     subtitle: 'East of the tunnel',                  points: 3  },
+      { id: 'beaver',       name: 'Beaver',                   subtitle: 'Virgin River',                        points: 3  },
+      { id: 'eagle',        name: 'Golden / Bald Eagle',      subtitle: '',                                    points: 3  },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
+      { id: 'turkey',       name: 'Wild Turkey',              subtitle: '',                                    points: 2  },
+      { id: 'squirrel',     name: 'Rock Squirrel / Chipmunk', subtitle: '',                                    points: 1  },
+      { id: 'deer',         name: 'Mule Deer',                subtitle: 'Canyon floor — common',               points: 1  }
+    ]
+  },
+  'acadia': {
+    id: 'acadia',
+    name: 'Acadia',
+    region: 'Maine',
+    defaultGoal: 40,
+    animals: [
+      { id: 'moose',        name: 'Moose',                    subtitle: 'Rarely reaches the island',           points: 15 },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Rarely seen',                         points: 10 },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Secretive — small population',        points: 8  },
+      { id: 'puffin',       name: 'Atlantic Puffin',          subtitle: 'Offshore islets — by boat',           points: 6  },
+      { id: 'whale',        name: 'Whale',                    subtitle: 'Humpback, minke, fin — by tour',      points: 5  },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Precipice / Cadillac cliffs',         points: 4  },
+      { id: 'loon',         name: 'Common Loon',              subtitle: 'Park lakes',                          points: 3  },
+      { id: 'eagle',        name: 'Bald Eagle / Osprey',      subtitle: '',                                    points: 3  },
+      { id: 'otterbeaver',  name: 'Otter / Beaver',           subtitle: '',                                    points: 3  },
+      { id: 'seal',         name: 'Seal',                     subtitle: 'Harbor & gray — rock ledges',         points: 2  },
+      { id: 'porpoise',     name: 'Porpoise / Dolphin',       subtitle: 'Harbor porpoise, white-sided',        points: 2  },
+      { id: 'fox',          name: 'Red Fox / Coyote',         subtitle: '',                                    points: 1  },
+      { id: 'seabirds',     name: 'Seabirds',                 subtitle: 'Eider, guillemot, gull, tern',        points: 1  },
+      { id: 'deer',         name: 'White-tailed Deer',        subtitle: 'Adults free — babies only',           points: 0  }
+    ]
+  },
+  'olympic': {
+    id: 'olympic',
+    name: 'Olympic',
+    region: 'Washington',
+    defaultGoal: 45,
+    animals: [
+      { id: 'cougar',       name: 'Cougar',                   subtitle: 'Apex predator — rarely seen',         points: 15 },
+      { id: 'spottedowl',   name: 'Northern Spotted Owl',     subtitle: 'Endangered — old growth',             points: 10 },
+      { id: 'murrelet',     name: 'Marbled Murrelet',         subtitle: 'Rarest bird — nests in old growth',   points: 8  },
+      { id: 'seaotter',     name: 'Sea Otter',                subtitle: 'Offshore coast',                      points: 6  },
+      { id: 'marmot',       name: 'Olympic Marmot',           subtitle: 'Endemic — Hurricane Ridge',           points: 5  },
+      { id: 'mtngoat',      name: 'Mountain Goat',            subtitle: 'Introduced — being removed',          points: 5  },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Secretive — backcountry',             points: 4  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 4  },
+      { id: 'harlequin',    name: 'Harlequin Duck',           subtitle: 'Wild rivers / Ediz Hook',             points: 3  },
+      { id: 'graywhale',    name: 'Gray Whale',               subtitle: 'Migratory — coast',                   points: 3  },
+      { id: 'otter',        name: 'River Otter',              subtitle: '',                                    points: 3  },
+      { id: 'eagle',        name: 'Bald Eagle',               subtitle: 'Coast & rivers',                      points: 2  },
+      { id: 'seal',         name: 'Harbor Seal',              subtitle: 'Coast',                               points: 2  },
+      { id: 'deer',         name: 'Black-tailed Deer',        subtitle: '',                                    points: 1  },
+      { id: 'elk',          name: 'Roosevelt Elk',            subtitle: 'Adults free — babies only',           points: 0  }
+    ]
+  },
+  'arches-canyonlands': {
+    id: 'arches-canyonlands',
+    name: 'Arches & Canyonlands',
+    region: 'Utah',
+    defaultGoal: 45,
+    animals: [
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'ringtail',     name: 'Ringtail',                 subtitle: 'Nocturnal',                           points: 8  },
+      { id: 'kitfox',       name: 'Kit Fox',                  subtitle: 'Smallest canid — nocturnal',          points: 6  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
+      { id: 'bighorn',      name: 'Desert Bighorn Sheep',     subtitle: 'Canyonlands herds',                   points: 4  },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Canyon cliffs',                       points: 4  },
+      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: 'Mostly nocturnal',                    points: 4  },
+      { id: 'eagle',        name: 'Golden Eagle',             subtitle: '',                                    points: 3  },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
+      { id: 'owls',         name: 'Owls',                     subtitle: 'Great horned, others',                points: 2  },
+      { id: 'squirrel',     name: 'Rock Squirrel / Chipmunk', subtitle: '',                                    points: 1  },
+      { id: 'raven',        name: 'Raven / Pinyon Jay',       subtitle: '',                                    points: 1  },
+      { id: 'deer',         name: 'Mule Deer',                subtitle: 'Less common in the slickrock',        points: 2  }
+    ]
+  },
+  'capitol-reef': {
+    id: 'capitol-reef',
+    name: 'Capitol Reef',
+    region: 'Utah',
+    defaultGoal: 45,
+    animals: [
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'ringtail',     name: 'Ringtail',                 subtitle: 'Nocturnal',                           points: 8  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Endangered — cliffs',                 points: 5  },
+      { id: 'fox',          name: 'Gray / Kit Fox',           subtitle: 'Nocturnal',                           points: 4  },
+      { id: 'pronghorn',    name: 'Pronghorn',                subtitle: 'Open country',                        points: 4  },
+      { id: 'elk',          name: 'Elk',                      subtitle: 'Less common here',                    points: 3  },
+      { id: 'eagle',        name: 'Golden Eagle',             subtitle: '',                                    points: 3  },
+      { id: 'bighorn',      name: 'Desert Bighorn Sheep',     subtitle: 'Grand Wash / Capitol Gorge',          points: 3  },
+      { id: 'marmot',       name: 'Yellow-bellied Marmot',    subtitle: 'Fruita',                              points: 2  },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
+      { id: 'squirrel',     name: 'Rock Squirrel / Chipmunk', subtitle: '',                                    points: 1  },
+      { id: 'raven',        name: 'Raven / Jay / Chukar',     subtitle: '',                                    points: 1  },
+      { id: 'deer',         name: 'Mule Deer',                subtitle: 'Fruita orchards',                     points: 1  }
+    ]
+  },
+  'bryce': {
+    id: 'bryce',
+    name: 'Bryce Canyon',
+    region: 'Utah',
+    defaultGoal: 40,
+    animals: [
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'condor',       name: 'California Condor',         subtitle: 'Endangered — largest land bird',      points: 10 },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Nocturnal',                           points: 6  },
+      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: 'Nocturnal',                           points: 4  },
+      { id: 'prairiedog',   name: 'Utah Prairie Dog',         subtitle: 'Endangered — meadows',                points: 4  },
+      { id: 'pronghorn',    name: 'Pronghorn',                subtitle: 'Meadows',                             points: 3  },
+      { id: 'eagle',        name: 'Golden Eagle',             subtitle: '',                                    points: 3  },
+      { id: 'owls',         name: 'Owls',                     subtitle: 'Great horned, others',                points: 2  },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
+      { id: 'porcupine',    name: 'Porcupine',                subtitle: '',                                    points: 1  },
+      { id: 'raven',        name: 'Raven / Nutcracker / Jay', subtitle: '',                                    points: 1  },
+      { id: 'marmot',       name: 'Marmot / Chipmunk',        subtitle: '',                                    points: 1  },
+      { id: 'deer',         name: 'Mule Deer',                subtitle: 'Meadows',                             points: 1  }
+    ]
+  },
+  'grand-canyon': {
+    id: 'grand-canyon',
+    name: 'Grand Canyon',
+    region: 'Arizona',
+    defaultGoal: 45,
+    animals: [
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'condor',       name: 'California Condor',         subtitle: 'Navajo Bridge / South Rim',           points: 10 },
+      { id: 'spottedowl',   name: 'Mexican Spotted Owl',      subtitle: 'Threatened — inner canyon',           points: 8  },
+      { id: 'ringtail',     name: 'Ringtail',                 subtitle: 'Nocturnal — AZ state mammal',         points: 6  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
+      { id: 'kaibab',       name: 'Kaibab Squirrel',          subtitle: 'North Rim only',                      points: 5  },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Canyon cliffs',                       points: 4  },
+      { id: 'fox',          name: 'Gray / Kit Fox',           subtitle: 'Nocturnal',                           points: 4  },
+      { id: 'bighorn',      name: 'Desert Bighorn Sheep',     subtitle: 'Rocky ledges',                        points: 3  },
+      { id: 'eagle',        name: 'Golden / Bald Eagle',      subtitle: '',                                    points: 3  },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
+      { id: 'owls',         name: 'Owls',                     subtitle: 'Great horned, elf, pygmy',            points: 2  },
+      { id: 'squirrel',     name: 'Rock Squirrel / Chipmunk', subtitle: '',                                    points: 1  },
+      { id: 'raven',        name: 'Raven / Pinyon Jay',       subtitle: '',                                    points: 1  },
+      { id: 'deerelk',      name: 'Mule Deer / Elk',          subtitle: 'Common on both rims',                 points: 1  }
+    ]
+  },
+  'rocky-mountain': {
+    id: 'rocky-mountain',
+    name: 'Rocky Mountain',
+    region: 'Colorado',
+    defaultGoal: 45,
+    animals: [
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Very rarely seen',                    points: 15 },
+      { id: 'ptarmigan',    name: 'White-tailed Ptarmigan',   subtitle: 'Alpine tundra',                       points: 8  },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Uncommon',                            points: 6  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
+      { id: 'foxcoyote',    name: 'Fox / Coyote',             subtitle: '',                                    points: 4  },
+      { id: 'raptor',       name: 'Golden Eagle / Prairie Falcon', subtitle: 'Cliffs',                         points: 4  },
+      { id: 'moose',        name: 'Moose',                    subtitle: 'Kawuneeche Valley',                   points: 3  },
+      { id: 'beaver',       name: 'Beaver',                   subtitle: '',                                    points: 3  },
+      { id: 'marmotpika',   name: 'Marmot / Pika',            subtitle: 'Alpine rocks',                        points: 3  },
+      { id: 'bighorn',      name: 'Bighorn Sheep',            subtitle: 'Sheep Lakes',                         points: 2  },
+      { id: 'hare',         name: 'Snowshoe Hare',            subtitle: '',                                    points: 2  },
+      { id: 'squirrel',     name: 'Squirrel / Chipmunk / Nutcracker', subtitle: '',                            points: 1  },
+      { id: 'deerelk',      name: 'Elk / Mule Deer',          subtitle: 'Adults free — babies only',           points: 0  }
+    ]
+  },
+  'sequoia-kings': {
+    id: 'sequoia-kings',
+    name: 'Sequoia & Kings Canyon',
+    region: 'California',
+    defaultGoal: 45,
+    animals: [
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'bighorn',      name: 'Sierra Bighorn Sheep',     subtitle: 'Endangered — high alpine',            points: 10 },
+      { id: 'fisher',       name: 'Pacific Fisher',           subtitle: 'Rare forest carnivore',               points: 8  },
+      { id: 'graygowl',     name: 'Great Gray Owl',           subtitle: 'Meadows',                             points: 6  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
+      { id: 'foxcoyote',    name: 'Gray Fox / Coyote',        subtitle: '',                                    points: 4  },
+      { id: 'raptor',       name: 'Golden Eagle / Peregrine', subtitle: 'Cliffs',                              points: 4  },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Forested areas',                      points: 3  },
+      { id: 'marmotpika',   name: 'Marmot / Pika',            subtitle: 'Alpine rocks',                        points: 3  },
+      { id: 'jay',          name: "Steller's Jay / Nutcracker", subtitle: '',                                  points: 2  },
+      { id: 'squirrel',     name: 'Squirrel / Chipmunk',      subtitle: '',                                    points: 1  },
+      { id: 'deer',         name: 'Mule Deer',                subtitle: 'Adults free — babies only',           points: 0  }
+    ]
+  },
+  'yosemite': {
+    id: 'yosemite',
+    name: 'Yosemite',
+    region: 'California',
+    defaultGoal: 45,
+    animals: [
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'bighorn',      name: 'Sierra Bighorn Sheep',     subtitle: 'Endangered — Tioga Pass',             points: 10 },
+      { id: 'graygowl',     name: 'Great Gray Owl',           subtitle: 'Unique to Yosemite — meadows',        points: 8  },
+      { id: 'fisher',       name: 'Pacific Fisher',           subtitle: 'Rare forest carnivore',               points: 6  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'El Capitan cliffs',                   points: 4  },
+      { id: 'foxcoyote',    name: 'Gray Fox / Coyote',        subtitle: '',                                    points: 4  },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Forests & valley',                    points: 3  },
+      { id: 'marmotpika',   name: 'Marmot / Pika',            subtitle: 'Alpine rocks',                        points: 3  },
+      { id: 'jay',          name: "Steller's Jay / Nutcracker", subtitle: '',                                  points: 2  },
+      { id: 'squirrel',     name: 'Squirrel / Chipmunk',      subtitle: '',                                    points: 1  },
+      { id: 'deer',         name: 'Mule Deer',                subtitle: 'Adults free — babies only',           points: 0  }
+    ]
+  },
+  'channel-islands': {
+    id: 'channel-islands',
+    name: 'Channel Islands',
+    region: 'California',
+    defaultGoal: 40,
+    animals: [
+      { id: 'orca',         name: 'Orca',                     subtitle: 'Rare visitor',                        points: 15 },
+      { id: 'skunk',        name: 'Island Spotted Skunk',     subtitle: 'Endemic — nocturnal',                 points: 10 },
+      { id: 'bluewhale',    name: 'Blue Whale',               subtitle: 'Summer — largest animal on earth',    points: 8  },
+      { id: 'scrubjay',     name: 'Island Scrub-Jay',         subtitle: 'Endemic — Santa Cruz only',           points: 6  },
+      { id: 'eagle',        name: 'Bald Eagle',               subtitle: 'Reintroduced',                        points: 5  },
+      { id: 'whale',        name: 'Humpback / Gray Whale',    subtitle: 'Migratory',                           points: 4  },
+      { id: 'furseal',      name: 'Fur / Elephant Seal',      subtitle: 'Point Bennett',                       points: 4  },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Sea cliffs',                          points: 3  },
+      { id: 'dolphin',      name: 'Common Dolphin',           subtitle: 'Large pods',                          points: 2  },
+      { id: 'seal',         name: 'Harbor Seal / Sea Lion',   subtitle: 'Common',                              points: 2  },
+      { id: 'fox',          name: 'Island Fox',               subtitle: 'Endemic — bold & easy to see',        points: 2  }
+    ]
+  },
+  'pinnacles': {
+    id: 'pinnacles',
+    name: 'Pinnacles',
+    region: 'California',
+    defaultGoal: 40,
+    animals: [
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'condor',       name: 'California Condor',         subtitle: 'Release site — free-flying',          points: 10 },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Secretive',                           points: 6  },
+      { id: 'bats',         name: 'Bats',                     subtitle: 'Talus caves — 13 species',            points: 5  },
+      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: 'Nocturnal',                           points: 4  },
+      { id: 'prairiefalcon', name: 'Prairie Falcon',          subtitle: 'High breeding density',               points: 4  },
+      { id: 'raptor',       name: 'Golden Eagle / Peregrine', subtitle: 'Cliffs',                              points: 3  },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
+      { id: 'owls',         name: 'Owls',                     subtitle: 'Great horned, others',                points: 2  },
+      { id: 'squirrel',     name: 'Squirrel / Chipmunk',      subtitle: '',                                    points: 1  },
+      { id: 'raven',        name: 'Raven / Jay',              subtitle: '',                                    points: 1  },
+      { id: 'deer',         name: 'Mule Deer',                subtitle: 'Adults free — babies only',           points: 0  }
+    ]
+  },
+  'joshua-tree': {
+    id: 'joshua-tree',
+    name: 'Joshua Tree',
+    region: 'California',
+    defaultGoal: 40,
+    animals: [
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'bighorn',      name: 'Desert Bighorn Sheep',     subtitle: 'Barker Dam — at dawn/dusk',           points: 8  },
+      { id: 'tortoise',     name: 'Desert Tortoise',          subtitle: 'Threatened — spring/fall after rain', points: 6  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Uncommon',                            points: 5  },
+      { id: 'kitfox',       name: 'Kit Fox',                  subtitle: 'Nocturnal',                           points: 4  },
+      { id: 'eagle',        name: 'Golden Eagle',             subtitle: 'Cliffs',                              points: 4  },
+      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: '',                                    points: 3  },
+      { id: 'roadrunner',   name: 'Roadrunner',               subtitle: 'Desert icon',                         points: 3  },
+      { id: 'quail',        name: "Gambel's Quail",           subtitle: '',                                    points: 2  },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
+      { id: 'jackrabbit',   name: 'Jackrabbit / Kangaroo Rat', subtitle: '',                                   points: 1  },
+      { id: 'squirrel',     name: 'Squirrel / Chipmunk',      subtitle: '',                                    points: 1  },
+      { id: 'deer',         name: 'Mule Deer',                subtitle: 'Higher elevations — uncommon',        points: 2  }
+    ]
+  },
+  'death-valley': {
+    id: 'death-valley',
+    name: 'Death Valley',
+    region: 'California / Nevada',
+    defaultGoal: 40,
+    animals: [
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'bighorn',      name: 'Desert Bighorn Sheep',     subtitle: 'Klare Spring / Titus Canyon',         points: 8  },
+      { id: 'kitfox',       name: 'Kit Fox',                  subtitle: 'Nocturnal',                           points: 6  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
+      { id: 'pupfish',      name: 'Pupfish',                  subtitle: 'Endemic — Salt Creek (spring)',       points: 5  },
+      { id: 'eagle',        name: 'Golden Eagle',             subtitle: 'Cliffs',                              points: 4  },
+      { id: 'burro',        name: 'Wild Burro',               subtitle: 'Feral',                               points: 3  },
+      { id: 'roadrunner',   name: 'Roadrunner',               subtitle: 'Desert icon',                         points: 3  },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
+      { id: 'jackrabbit',   name: 'Jackrabbit / Kangaroo Rat', subtitle: '',                                   points: 2  },
+      { id: 'raven',        name: "Raven / Gambel's Quail",   subtitle: '',                                    points: 1  },
+      { id: 'squirrel',     name: 'Squirrel / Chipmunk',      subtitle: '',                                    points: 1  }
+    ]
+  },
+  'mount-rainier': {
+    id: 'mount-rainier',
+    name: 'Mount Rainier',
+    region: 'Washington',
+    defaultGoal: 45,
+    animals: [
+      { id: 'cougar',       name: 'Cougar',                   subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'spottedowl',   name: 'Northern Spotted Owl',     subtitle: 'Endangered — old growth',             points: 10 },
+      { id: 'redfox',       name: 'Cascade Red Fox',          subtitle: 'High country — uncommon',             points: 6  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
+      { id: 'mtngoat',      name: 'Mountain Goat',            subtitle: 'High cliffs',                         points: 5  },
+      { id: 'marten',       name: 'Pine Marten',              subtitle: '',                                    points: 4  },
+      { id: 'ptarmigan',    name: 'White-tailed Ptarmigan',   subtitle: 'Alpine',                              points: 4  },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Meadows & forest',                    points: 3  },
+      { id: 'marmotpika',   name: 'Hoary Marmot / Pika',      subtitle: 'Paradise meadows',                    points: 3  },
+      { id: 'jay',          name: 'Gray Jay / Nutcracker',    subtitle: '',                                    points: 2  },
+      { id: 'squirrel',     name: 'Douglas Squirrel / Chipmunk', subtitle: '',                                 points: 1  },
+      { id: 'deerelk',      name: 'Elk / Black-tailed Deer',  subtitle: 'Adults free — babies only',           points: 0  }
+    ]
+  },
+  'north-cascades': {
+    id: 'north-cascades',
+    name: 'North Cascades',
+    region: 'Washington',
+    defaultGoal: 45,
+    animals: [
+      { id: 'grizzly',      name: 'Grizzly Bear',             subtitle: 'Functionally gone — a unicorn',       points: 15 },
+      { id: 'wolverine',    name: 'Wolverine',                subtitle: 'High country — ~3 dozen statewide',   points: 12 },
+      { id: 'lynx',         name: 'Canada Lynx',              subtitle: 'Threatened — elusive',                points: 10 },
+      { id: 'wolf',         name: 'Gray Wolf',                subtitle: 'Rebounding — rare',                   points: 8  },
+      { id: 'cougar',       name: 'Cougar',                   subtitle: 'Elusive',                             points: 6  },
+      { id: 'fisher',       name: 'Pacific Fisher',           subtitle: 'Reintroduced',                        points: 5  },
+      { id: 'mtngoat',      name: 'Mountain Goat',            subtitle: 'High cliffs',                         points: 5  },
+      { id: 'marten',       name: 'Pine Marten',              subtitle: '',                                    points: 4  },
+      { id: 'moose',        name: 'Moose',                    subtitle: 'Eastern valleys — rare',              points: 4  },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Common',                              points: 3  },
+      { id: 'marmotpika',   name: 'Hoary Marmot / Pika',      subtitle: 'Alpine',                              points: 3  },
+      { id: 'eagle',        name: 'Bald Eagle',               subtitle: 'Skagit — winter',                     points: 2  },
+      { id: 'jay',          name: 'Gray Jay / Nutcracker',    subtitle: '',                                    points: 2  },
+      { id: 'squirrel',     name: 'Douglas Squirrel / Chipmunk', subtitle: '',                                 points: 1  },
+      { id: 'deer',         name: 'Black-tailed Deer',        subtitle: 'Adults free — babies only',           points: 0  }
+    ]
+  }
+};
+const DEFAULT_PARK = 'yellowstone-teton';
+
+// Typical points an engaged family racks up per active day, by park — used to
+// pre-fill the goal (perDay × days). Hand-tuned from each park's animal mix and
+// realistic sighting odds. New parks without an entry fall back to defaultGoal/3.
+const PARK_PER_DAY = {
+  'yellowstone-teton': 16, 'glacier': 15, 'smokies': 14, 'everglades': 14,
+  'rocky-mountain': 12, 'olympic': 12, 'zion': 12, 'mount-rainier': 11,
+  'channel-islands': 11, 'grand-canyon': 11, 'pinnacles': 10, 'yosemite': 10,
+  'sequoia-kings': 10, 'north-cascades': 10, 'acadia': 10, 'capitol-reef': 10,
+  'bryce': 10, 'arches-canyonlands': 8, 'joshua-tree': 8, 'death-valley': 7
+};
+function suggestedGoal(parkId, days) {
+  const perDay = PARK_PER_DAY[parkId] || Math.round((PARKS[parkId] && PARKS[parkId].defaultGoal || 45) / 3);
+  return Math.max(5, Math.round(perDay * days / 5) * 5);  // round to a clean multiple of 5
+}
+
+const STORAGE_KEY = 'wildlife-tally-app-v1';
+let appState = { trips: {}, nextJournalNum: 1 };
+let currentTripId = null;
+let currentDayIdx = 0;
+let tripSubView = 'tally';
+let formState = null;
+
+function loadAppState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') appState = Object.assign({ trips: {}, nextJournalNum: 1 }, parsed);
+    }
+  } catch (e) { console.error('load fail', e); }
+}
+function saveAppState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState)); } catch (e) { console.error('save fail', e); }
+}
+
+function newId(prefix) { return prefix + '-' + Math.random().toString(36).slice(2, 9); }
+function todayISO() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function addDays(iso, n) {
+  const [y, m, d] = iso.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  dt.setDate(dt.getDate() + n);
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+}
+function formatDateShort(iso) {
+  if (!iso) return '';
+  const [y, m, d] = iso.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  return `${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dt.getDay()]} ${m}/${d}`;
+}
+function formatDateRange(dates) {
+  if (!dates || !dates.length) return '';
+  if (dates.length === 1) return formatDateShort(dates[0]);
+  const first = dates[0], last = dates[dates.length - 1];
+  const [y1,m1,d1] = first.split('-').map(Number);
+  const [y2,m2,d2] = last.split('-').map(Number);
+  if (y1 === y2 && m1 === m2) return `${m1}/${d1}–${d2}, ${y1}`;
+  return `${m1}/${d1} – ${m2}/${d2}, ${y2}`;
+}
+function escapeHtml(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function tierClass(pts) { if (pts >= 12) return 'mythical'; if (pts >= 6) return 'high'; return ''; }
+function deepClone(o) { return JSON.parse(JSON.stringify(o)); }
+function modeLabel(mode) { return mode === 'team' ? 'Team' : mode === 'fantasy' ? 'Fantasy Team' : 'Pick an Animal'; }
+function modeBadgeClass(mode) { return mode === 'team' ? '' : mode === 'fantasy' ? 'fantasy' : 'versus'; }
+function teamColorClass(idx) { return 'tc' + (idx % 6); }
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function teamColorIndex(trip, teamId) { return trip.teams ? trip.teams.findIndex(t => t.id === teamId) : 0; }
+function teamPlayerNames(trip, team) {
+  return team.playerIds.map(pid => (trip.players.find(p => p.id === pid) || {}).name).filter(Boolean).join(' & ');
+}
+
+function showView(name, push = true) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const el = document.getElementById('view-' + name);
+  if (el) el.classList.add('active');
+  if (push) history.pushState({ view: name }, '', '#' + name);
+  window.scrollTo(0, 0);
+}
+window.addEventListener('popstate', e => showView((e.state && e.state.view) || 'home', false));
+document.querySelectorAll('[data-back]').forEach(btn => btn.addEventListener('click', () => history.back()));
+
+function renderHome() {
+  const container = document.getElementById('tripsContainer');
+  const trips = Object.values(appState.trips).sort((a, b) => b.lastModified - a.lastModified);
+  if (trips.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="icon">— ◆ —</div><p>No journals yet.<br>Start your first trip above.</p></div>`;
+    return;
+  }
+  container.innerHTML = `<div class="section-label">Your Journals</div>${trips.map(renderTripCard).join('')}`;
+  container.querySelectorAll('[data-trip]').forEach(card => {
+    card.addEventListener('click', () => { openTrip(card.dataset.trip); });
+  });
+}
+
+function defaultDayIdx(trip) {
+  const today = todayISO();
+  const idx = trip.days.findIndex(d => d.date === today);
+  return idx >= 0 ? idx : 0;
+}
+function openTrip(tripId) {
+  currentTripId = tripId;
+  const trip = appState.trips[tripId];
+  tripSubView = 'tally';
+  currentDayIdx = trip ? defaultDayIdx(trip) : 0;
+  renderTrip();
+  showView('trip');
+}
+
+function renderTripCard(trip) {
+  const dates = trip.days.map(d => d.date);
+  const dateRange = formatDateRange(dates);
+  const playerNames = trip.players.map(p => p.name).join(' & ');
+  const journalLabel = `Field Journal № ${String(trip.journalNum).padStart(2, '0')}`;
+  let status;
+  if (trip.mode === 'team') {
+    status = `${teamGrandTotal(trip)} / ${trip.goal} points`;
+  } else if (trip.mode === 'fantasy') {
+    if (!trip.draft || !trip.draft.complete) {
+      status = 'Draft in progress…';
+    } else {
+      const scored = trip.teams.map(t => ({ name: t.name, score: fantasyTeamScore(trip, t.id) }));
+      scored.sort((a, b) => b.score - a.score);
+      const lead = scored[0];
+      status = !lead || lead.score === 0 ? '0 pts so far' : `Leading: ${escapeHtml(lead.name)} — ${lead.score} pts`;
+    }
+  } else {
+    const scored = trip.players.map(p => ({ name: p.name, score: versusPlayerScore(trip, p.id) }));
+    scored.sort((a, b) => b.score - a.score);
+    const lead = scored[0];
+    status = !lead || lead.score === 0 ? '0 pts so far' : `Leading: ${escapeHtml(lead.name)} — ${lead.score} pts`;
+  }
+  return `
+    <div class="trip-card" data-trip="${trip.id}">
+      <div class="journal-num">${journalLabel}</div>
+      <div class="park-name">${escapeHtml(trip.park)}</div>
+      <div><span class="mode-badge ${modeBadgeClass(trip.mode)}">${modeLabel(trip.mode)}</span></div>
+      <div class="meta" style="margin-top:6px;">${escapeHtml(dateRange)}<span class="dot">·</span>${escapeHtml(playerNames || 'no players')}</div>
+      <div class="status">${status}</div>
+    </div>`;
+}
+
+function initNewTripForm() {
+  formState = {
+    parkId: DEFAULT_PARK,
+    mode: 'team',
+    startDate: todayISO(),
+    daysCount: 3,
+    goal: suggestedGoal(DEFAULT_PARK, 3),
+    goalEdited: false,
+    players: [{ id: newId('p'), name: '', teamAnimalId: PARKS[DEFAULT_PARK].animals[0].id, teamId: 't0' }],
+    animals: deepClone(PARKS[DEFAULT_PARK].animals),
+    animalEditorOpen: false,
+    teamCount: 2,
+    teams: [{ id: 't0', name: 'Team 1' }, { id: 't1', name: 'Team 2' }]
+  };
+  const sel = document.getElementById('parkSelect');
+  sel.innerHTML = Object.values(PARKS).sort((a, b) => a.name.localeCompare(b.name)).map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+  sel.value = formState.parkId;
+  document.getElementById('startDate').value = formState.startDate;
+  document.getElementById('daysCount').value = formState.daysCount;
+  document.getElementById('goalInput').value = formState.goal;
+  renderFormDynamic();
+}
+
+function refreshSuggestedGoal() {
+  if (formState.goalEdited) return;   // user typed their own goal — leave it alone
+  formState.goal = suggestedGoal(formState.parkId, formState.daysCount);
+  const gi = document.getElementById('goalInput');
+  if (gi) gi.value = formState.goal;
+}
+
+function renderFormDynamic() {
+  refreshSuggestedGoal();
+  document.getElementById('goalSection').style.display = formState.mode === 'team' ? 'block' : 'none';
+  document.getElementById('versusSection').style.display = formState.mode === 'versus' ? 'block' : 'none';
+  document.getElementById('fantasySection').style.display = formState.mode === 'fantasy' ? 'block' : 'none';
+  const dates = [];
+  for (let i = 0; i < formState.daysCount; i++) dates.push(addDays(formState.startDate, i));
+  document.getElementById('datePreview').innerHTML = 'TRIP DATES: ' + dates.map(formatDateShort).join('  ·  ');
+  renderPlayersList();
+  renderVersusPickList();
+  renderFantasySetup();
+  renderAnimalSummary();
+  renderAnimalEditor();
+}
+
+function syncFantasyTeams() {
+  // Rebuild teams array to match teamCount, preserving existing names/ids.
+  const teams = [];
+  for (let i = 0; i < formState.teamCount; i++) {
+    const existing = formState.teams[i];
+    teams.push(existing || { id: 't' + i, name: 'Team ' + (i + 1) });
+  }
+  formState.teams = teams;
+  const validIds = teams.map(t => t.id);
+  // Reassign any player whose team no longer exists, round-robin for balance.
+  formState.players.forEach((p, idx) => {
+    if (!validIds.includes(p.teamId)) p.teamId = validIds[idx % validIds.length];
+  });
+}
+
+function renderFantasySetup() {
+  if (formState.mode !== 'fantasy') return;
+  document.getElementById('teamsCount').value = formState.teamCount;
+  syncFantasyTeams();
+  const namesEl = document.getElementById('fantasyTeamNames');
+  namesEl.innerHTML = formState.teams.map((t, i) => `
+    <div class="team-name-row">
+      <span class="chip ${teamColorClass(i)}">Team ${i + 1}</span>
+      <input type="text" data-team-name="${t.id}" value="${escapeHtml(t.name)}" placeholder="Team ${i + 1}">
+    </div>`).join('');
+  namesEl.querySelectorAll('[data-team-name]').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const t = formState.teams.find(x => x.id === e.target.dataset.teamName);
+      if (t) t.name = e.target.value;
+      renderFantasySetup();
+    });
+  });
+  const assignEl = document.getElementById('fantasyAssignList');
+  assignEl.innerHTML = formState.players.map((p, idx) => {
+    const displayName = p.name.trim() || `Player ${idx + 1}`;
+    return `
+      <div class="fantasy-assign-row">
+        <div class="name">${escapeHtml(displayName)}</div>
+        <select data-assign="${p.id}">
+          ${formState.teams.map((t, i) => `<option value="${t.id}" ${p.teamId === t.id ? 'selected' : ''}>${escapeHtml(t.name.trim() || 'Team ' + (i + 1))}</option>`).join('')}
+        </select>
+      </div>`;
+  }).join('');
+  assignEl.querySelectorAll('[data-assign]').forEach(sel => {
+    sel.addEventListener('change', e => {
+      const p = formState.players.find(x => x.id === e.target.dataset.assign);
+      if (p) p.teamId = e.target.value;
+    });
+  });
+}
+
+function renderPlayersList() {
+  const list = document.getElementById('playersList');
+  const solo = formState.players.length === 1;
+  list.innerHTML = formState.players.map((p, idx) => `
+    <div class="player-row ${solo ? 'solo' : ''}">
+      <input type="text" data-player-input="${p.id}" placeholder="Player ${idx + 1}" value="${escapeHtml(p.name)}">
+      <button type="button" class="remove" data-remove-player="${p.id}">×</button>
+    </div>`).join('');
+  list.querySelectorAll('[data-player-input]').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const id = e.target.dataset.playerInput;
+      const p = formState.players.find(x => x.id === id);
+      if (p) p.name = e.target.value;
+      renderVersusPickList();
+      renderFantasySetup();
+    });
+  });
+  list.querySelectorAll('[data-remove-player]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const id = e.target.dataset.removePlayer;
+      formState.players = formState.players.filter(x => x.id !== id);
+      renderPlayersList();
+      renderVersusPickList();
+      renderFantasySetup();
+    });
+  });
+  const addBtn = document.getElementById('addPlayerBtn');
+  addBtn.disabled = formState.players.length >= 6;
+  addBtn.style.opacity = addBtn.disabled ? 0.4 : 1;
+}
+
+function renderVersusPickList() {
+  if (formState.mode !== 'versus') return;
+  const list = document.getElementById('versusPickList');
+  list.innerHTML = formState.players.map((p, idx) => {
+    const displayName = p.name.trim() || `Player ${idx + 1}`;
+    return `
+      <div class="versus-row">
+        <div class="name">${escapeHtml(displayName)}</div>
+        <select data-versus-pick="${p.id}">
+          ${formState.animals.map(a => `<option value="${a.id}" ${p.teamAnimalId === a.id ? 'selected' : ''}>${escapeHtml(a.name)} (${a.points}/${a.points + 1})</option>`).join('')}
+        </select>
+      </div>`;
+  }).join('');
+  list.querySelectorAll('[data-versus-pick]').forEach(sel => {
+    sel.addEventListener('change', e => {
+      const id = e.target.dataset.versusPick;
+      const p = formState.players.find(x => x.id === id);
+      if (p) p.teamAnimalId = e.target.value;
+    });
+  });
+}
+
+function renderAnimalSummary() {
+  document.getElementById('animalSummaryText').textContent = `${formState.animals.length} animals · ${PARKS[formState.parkId].name} preset`;
+}
+
+function renderAnimalEditor() {
+  const editor = document.getElementById('animalEditor');
+  const btn = document.getElementById('toggleAnimalEditor');
+  if (formState.animalEditorOpen) { editor.classList.add('open'); btn.textContent = 'Hide ↑'; }
+  else { editor.classList.remove('open'); btn.textContent = 'Edit ↓'; return; }
+  const list = document.getElementById('animalEditList');
+  list.innerHTML = formState.animals.map(a => `
+    <div class="animal-edit-row">
+      <input type="text" data-animal-name="${a.id}" value="${escapeHtml(a.name)}" placeholder="Animal name">
+      <input type="number" data-animal-points="${a.id}" value="${a.points}" min="0" max="99">
+      <button type="button" class="remove" data-animal-remove="${a.id}">×</button>
+    </div>`).join('');
+  list.querySelectorAll('[data-animal-name]').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const a = formState.animals.find(x => x.id === e.target.dataset.animalName);
+      if (a) a.name = e.target.value;
+      renderVersusPickList();
+    });
+  });
+  list.querySelectorAll('[data-animal-points]').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const a = formState.animals.find(x => x.id === e.target.dataset.animalPoints);
+      if (a) a.points = Math.max(0, parseInt(e.target.value || '0', 10));
+      renderVersusPickList();
+    });
+  });
+  list.querySelectorAll('[data-animal-remove]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const id = e.target.dataset.animalRemove;
+      formState.animals = formState.animals.filter(x => x.id !== id);
+      formState.players.forEach(p => { if (p.teamAnimalId === id && formState.animals.length) p.teamAnimalId = formState.animals[0].id; });
+      renderAnimalSummary();
+      renderAnimalEditor();
+      renderVersusPickList();
+    });
+  });
+}
+
+document.getElementById('newTripBtn').addEventListener('click', () => { initNewTripForm(); showView('new'); });
+
+document.getElementById('parkSelect').addEventListener('change', e => {
+  formState.parkId = e.target.value;
+  formState.animals = deepClone(PARKS[formState.parkId].animals);
+  formState.goalEdited = false;   // new park re-suggests a fresh goal
+  formState.players.forEach(p => p.teamAnimalId = formState.animals[0]?.id || null);
+  renderFormDynamic();
+});
+
+document.querySelectorAll('input[name=mode]').forEach(r => {
+  r.addEventListener('change', e => { formState.mode = e.target.value; renderFormDynamic(); });
+});
+
+document.getElementById('startDate').addEventListener('change', e => { formState.startDate = e.target.value || todayISO(); renderFormDynamic(); });
+
+document.getElementById('daysUp').addEventListener('click', () => {
+  if (formState.daysCount < 10) { formState.daysCount++; document.getElementById('daysCount').value = formState.daysCount; renderFormDynamic(); }
+});
+document.getElementById('daysDown').addEventListener('click', () => {
+  if (formState.daysCount > 1) { formState.daysCount--; document.getElementById('daysCount').value = formState.daysCount; renderFormDynamic(); }
+});
+
+document.getElementById('goalInput').addEventListener('input', e => { formState.goalEdited = true; formState.goal = Math.max(1, parseInt(e.target.value || '45', 10)); });
+
+document.getElementById('addPlayerBtn').addEventListener('click', () => {
+  if (formState.players.length >= 6) return;
+  formState.players.push({ id: newId('p'), name: '', teamAnimalId: formState.animals[0]?.id || null, teamId: formState.teams[0]?.id || 't0' });
+  renderPlayersList();
+  renderVersusPickList();
+  renderFantasySetup();
+});
+
+document.getElementById('teamsUp').addEventListener('click', () => {
+  const maxTeams = Math.min(6, Math.max(2, formState.players.length));
+  if (formState.teamCount < maxTeams) { formState.teamCount++; renderFantasySetup(); }
+});
+document.getElementById('teamsDown').addEventListener('click', () => {
+  if (formState.teamCount > 2) { formState.teamCount--; renderFantasySetup(); }
+});
+
+document.getElementById('toggleAnimalEditor').addEventListener('click', () => {
+  formState.animalEditorOpen = !formState.animalEditorOpen;
+  renderAnimalEditor();
+});
+
+document.getElementById('addAnimalBtn').addEventListener('click', () => {
+  formState.animals.push({ id: newId('a'), name: 'New Animal', subtitle: '', points: 1 });
+  renderAnimalEditor();
+  renderAnimalSummary();
+  renderVersusPickList();
+});
+
+document.getElementById('resetAnimalsBtn').addEventListener('click', () => {
+  if (!confirm('Reset animals to the park preset? Any custom edits will be lost.')) return;
+  formState.animals = deepClone(PARKS[formState.parkId].animals);
+  formState.players.forEach(p => p.teamAnimalId = formState.animals[0]?.id || null);
+  renderAnimalEditor();
+  renderAnimalSummary();
+  renderVersusPickList();
+});
+
+function buildDraftSequence(teamIds, animalCount) {
+  const base = shuffle(teamIds);              // random pick order; base[0] picks first
+  const snake = teamIds.length >= 3;          // snake for 3+, straight alternating for 2
+  const seq = [];
+  let round = 0;
+  while (seq.length < animalCount) {
+    const order = (snake && round % 2 === 1) ? base.slice().reverse() : base;
+    for (const t of order) { if (seq.length < animalCount) seq.push(t); }
+    round++;
+  }
+  return seq;
+}
+
+document.getElementById('startTripBtn').addEventListener('click', () => {
+  const validPlayers = formState.players.filter(p => p.name.trim());
+  if (validPlayers.length === 0) { alert('Add at least one player name.'); return; }
+  if (formState.animals.length === 0) { alert('You need at least one animal to track.'); return; }
+
+  let teams = null;
+  if (formState.mode === 'fantasy') {
+    teams = formState.teams.map(t => ({
+      id: t.id,
+      name: t.name.trim() || ('Team ' + (formState.teams.indexOf(t) + 1)),
+      playerIds: validPlayers.filter(p => p.teamId === t.id).map(p => p.id)
+    }));
+    const empty = teams.filter(t => t.playerIds.length === 0);
+    if (empty.length) { alert(`Every team needs at least one player. Empty: ${empty.map(t => t.name).join(', ')}.`); return; }
+  }
+
+  const days = [];
+  for (let i = 0; i < formState.daysCount; i++) days.push({ date: addDays(formState.startDate, i) });
+  const tripId = newId('trip');
+  const trip = {
+    id: tripId,
+    journalNum: appState.nextJournalNum,
+    park: PARKS[formState.parkId].name,
+    parkId: formState.parkId,
+    mode: formState.mode,
+    days,
+    players: validPlayers.map(p => ({ id: p.id, name: p.name.trim(), teamAnimalId: p.teamAnimalId, teamId: p.teamId })),
+    animals: deepClone(formState.animals),
+    goal: formState.goal,
+    teamTallies: {},
+    playerTallies: {},
+    created: Date.now(),
+    lastModified: Date.now()
+  };
+  if (trip.mode === 'team' || trip.mode === 'fantasy') {
+    trip.animals.forEach(a => { trip.teamTallies[a.id] = {}; days.forEach((_, i) => trip.teamTallies[a.id][i] = { a: 0, b: 0 }); });
+  } else {
+    trip.players.forEach(p => { trip.playerTallies[p.id] = {}; days.forEach((_, i) => trip.playerTallies[p.id][i] = { a: 0, b: 0 }); });
+  }
+  if (trip.mode === 'fantasy') {
+    trip.teams = teams;
+    trip.animalOwners = {};   // animalId -> teamId, filled by the draft
+    trip.draft = { sequence: buildDraftSequence(teams.map(t => t.id), trip.animals.length), pickIndex: 0, complete: false };
+  }
+  appState.trips[tripId] = trip;
+  appState.nextJournalNum++;
+  saveAppState();
+  renderHome();
+  openTrip(tripId);
+});
+
+function babyPts(a) { return a.points + 1; }
+function teamDayTotal(trip, dayIdx) {
+  return trip.animals.reduce((sum, a) => {
+    const t = trip.teamTallies[a.id]?.[dayIdx] || { a: 0, b: 0 };
+    return sum + (t.a * a.points) + (t.b * babyPts(a));
+  }, 0);
+}
+function teamGrandTotal(trip) { return trip.days.reduce((s, _, i) => s + teamDayTotal(trip, i), 0); }
+function versusPlayerDayScore(trip, playerId, dayIdx) {
+  const p = trip.players.find(x => x.id === playerId);
+  const a = trip.animals.find(x => x.id === p?.teamAnimalId);
+  if (!p || !a) return 0;
+  const t = trip.playerTallies[playerId]?.[dayIdx] || { a: 0, b: 0 };
+  return (t.a * a.points) + (t.b * babyPts(a));
+}
+function versusPlayerScore(trip, playerId) { return trip.days.reduce((s, _, i) => s + versusPlayerDayScore(trip, playerId, i), 0); }
+
+function animalDayPoints(trip, animal, dayIdx) {
+  const t = trip.teamTallies[animal.id]?.[dayIdx] || { a: 0, b: 0 };
+  return (t.a * animal.points) + (t.b * babyPts(animal));
+}
+function animalTotalPoints(trip, animal) { return trip.days.reduce((s, _, i) => s + animalDayPoints(trip, animal, i), 0); }
+function fantasyTeamDayScore(trip, teamId, dayIdx) {
+  return trip.animals.reduce((s, a) => s + (trip.animalOwners[a.id] === teamId ? animalDayPoints(trip, a, dayIdx) : 0), 0);
+}
+function fantasyTeamScore(trip, teamId) { return trip.days.reduce((s, _, i) => s + fantasyTeamDayScore(trip, teamId, i), 0); }
+function fantasyDayTotal(trip, dayIdx) { return trip.animals.reduce((s, a) => s + animalDayPoints(trip, a, dayIdx), 0); }
+
+function renderTrip() {
+  const trip = appState.trips[currentTripId];
+  if (!trip) { showView('home'); return; }
+  document.getElementById('tripParkName').textContent = trip.park;
+  if (currentDayIdx >= trip.days.length) currentDayIdx = trip.days.length - 1;
+  if (currentDayIdx < 0) currentDayIdx = 0;
+  if (trip.mode === 'fantasy' && (!trip.draft || !trip.draft.complete)) {
+    document.getElementById('tripBody').innerHTML = renderDraft(trip);
+    wireDraft(trip);
+    return;
+  }
+  document.getElementById('tripBody').innerHTML =
+    tripSubView === 'summary' ? renderSummary(trip) : renderTallyDay(trip);
+  wireTripControls(trip);
+  wireTallyButtons(trip);
+}
+
+function draftedAnimalIds(trip) { return Object.keys(trip.animalOwners); }
+function draftRoundOf(trip, pickIndex) { return Math.floor(pickIndex / trip.teams.length) + 1; }
+
+function renderDraft(trip) {
+  const draft = trip.draft;
+  const totalPicks = draft.sequence.length;
+  const done = draft.pickIndex;
+  const currentTeamId = draft.sequence[draft.pickIndex];
+  const currentTeam = trip.teams.find(t => t.id === currentTeamId);
+  const cIdx = teamColorIndex(trip, currentTeamId);
+  const taken = draftedAnimalIds(trip);
+  const remaining = trip.animals.filter(a => !taken.includes(a.id)).slice().sort((a, b) => b.points - a.points);
+  const round = draftRoundOf(trip, draft.pickIndex);
+  const totalRounds = Math.ceil(totalPicks / trip.teams.length);
+
+  const banner = `
+    <div class="draft-banner">
+      <div class="round-label">Round ${round} of ${totalRounds} · Pick ${done + 1} of ${totalPicks}</div>
+      <div class="on-the-clock"><span class="owner-tag ${teamColorClass(cIdx)}" style="font-size:14px;vertical-align:middle;">${escapeHtml(currentTeam.name)}</span></div>
+      <div class="pick-meta">on the clock — ${escapeHtml(teamPlayerNames(trip, currentTeam) || 'no players')}</div>
+      <div class="draft-actions">
+        ${draft.pickIndex > 0 ? '<button class="secondary-btn" data-draft-undo>↩ Undo last pick</button>' : ''}
+        <button class="secondary-btn" data-draft-auto>⚡ Auto-pick rest</button>
+      </div>
+    </div>`;
+
+  const pickList = `
+    <div class="section-label">Pick an animal</div>
+    <div class="draft-pick-list">
+      ${remaining.map(a => `
+        <button class="draft-pick-btn" data-draft-pick="${a.id}">
+          <span>
+            <span class="an">${escapeHtml(a.name)}</span>
+            ${a.subtitle ? `<span class="sub">${escapeHtml(a.subtitle)}</span>` : ''}
+          </span>
+          <span class="pts-row">
+            <span class="pt-badge ${tierClass(a.points)}">${a.points} PTS</span>
+            <span class="pt-badge baby">BABY ${babyPts(a)}</span>
+          </span>
+        </button>`).join('')}
+    </div>`;
+
+  const rosters = `
+    <div class="section-label">Rosters</div>
+    ${trip.teams.map((t, i) => {
+      const owned = trip.animals.filter(a => trip.animalOwners[a.id] === t.id);
+      return `
+        <div class="draft-roster">
+          <div class="roster-head">
+            <span class="badge ${teamColorClass(i)}">${t.id === currentTeamId ? 'PICKING' : 'Team ' + (i + 1)}</span>
+            <span class="nm">${escapeHtml(t.name)}</span>
+            <span class="who">${escapeHtml(teamPlayerNames(trip, t))}</span>
+          </div>
+          <div class="picks">
+            ${owned.length ? owned.map(a => `<span class="pick-tag">${escapeHtml(a.name)} <span class="pp">${a.points}</span></span>`).join('') : '<span class="empty-pick">No picks yet</span>'}
+          </div>
+        </div>`;
+    }).join('')}`;
+
+  return banner + pickList + rosters;
+}
+
+function makeDraftPick(trip, animalId) {
+  const draft = trip.draft;
+  if (draft.complete) return;
+  const teamId = draft.sequence[draft.pickIndex];
+  trip.animalOwners[animalId] = teamId;
+  draft.pickIndex++;
+  if (draft.pickIndex >= draft.sequence.length) draft.complete = true;
+  trip.lastModified = Date.now();
+  saveAppState();
+  renderTrip();
+}
+
+function undoDraftPick(trip) {
+  const draft = trip.draft;
+  if (draft.pickIndex === 0) return;
+  draft.pickIndex--;
+  draft.complete = false;
+  // animalOwners keys are in pick order, so the last inserted key is the most recent pick.
+  const keys = Object.keys(trip.animalOwners);
+  if (keys.length) delete trip.animalOwners[keys[keys.length - 1]];
+  trip.lastModified = Date.now();
+  saveAppState();
+  renderTrip();
+}
+
+function autoPickRest(trip) {
+  const draft = trip.draft;
+  while (!draft.complete) {
+    const taken = draftedAnimalIds(trip);
+    const remaining = trip.animals.filter(a => !taken.includes(a.id)).sort((a, b) => b.points - a.points);
+    if (!remaining.length) { draft.complete = true; break; }
+    const teamId = draft.sequence[draft.pickIndex];
+    trip.animalOwners[remaining[0].id] = teamId;   // greedy: best available
+    draft.pickIndex++;
+    if (draft.pickIndex >= draft.sequence.length) draft.complete = true;
+  }
+  trip.lastModified = Date.now();
+  saveAppState();
+  renderTrip();
+}
+
+function wireDraft(trip) {
+  document.querySelectorAll('[data-draft-pick]').forEach(btn => {
+    btn.addEventListener('click', e => makeDraftPick(trip, e.currentTarget.dataset.draftPick));
+  });
+  const undo = document.querySelector('[data-draft-undo]');
+  if (undo) undo.addEventListener('click', () => undoDraftPick(trip));
+  const auto = document.querySelector('[data-draft-auto]');
+  if (auto) auto.addEventListener('click', () => { if (confirm('Auto-pick all remaining animals (best available to each team in turn)?')) autoPickRest(trip); });
+}
+
+function renderTripToggle() {
+  return `
+    <div class="view-toggle">
+      <button data-subview="tally" class="${tripSubView === 'tally' ? 'active' : ''}">Tally</button>
+      <button data-subview="summary" class="${tripSubView === 'summary' ? 'active' : ''}">Summary</button>
+    </div>`;
+}
+
+function renderDayPills(trip) {
+  return `<div class="day-pills">${trip.days.map((d, i) => {
+    const score = trip.mode === 'team'
+      ? teamDayTotal(trip, i)
+      : trip.mode === 'fantasy'
+        ? fantasyDayTotal(trip, i)
+        : trip.players.reduce((s, p) => s + versusPlayerDayScore(trip, p.id, i), 0);
+    return `
+      <button class="day-pill ${i === currentDayIdx ? 'active' : ''}" data-day="${i}">
+        <span class="d-num">Day ${i + 1}</span>${escapeHtml(formatDateShort(d.date))}<span class="d-score">${score} pts</span>
+      </button>`;
+  }).join('')}</div>`;
+}
+
+function renderTallyDay(trip) {
+  const dayIdx = currentDayIdx;
+  const compact = trip.mode === 'team'
+    ? renderTeamCompactTotal(trip, dayIdx)
+    : trip.mode === 'fantasy'
+      ? renderFantasyCompactStandings(trip)
+      : renderVersusCompactStandings(trip);
+  const entry = trip.mode === 'team'
+    ? renderTeamDayEntry(trip, dayIdx)
+    : trip.mode === 'fantasy'
+      ? renderFantasyDayEntry(trip, dayIdx)
+      : renderVersusDayEntry(trip, dayIdx);
+  return `
+    ${renderTripToggle()}
+    ${compact}
+    ${renderDayPills(trip)}
+    <div class="section-label">Day ${dayIdx + 1} — ${escapeHtml(formatDateShort(trip.days[dayIdx].date))}</div>
+    ${entry}`;
+}
+
+function renderBigTally(value, label, key, baby = false) {
+  return `
+    <div class="big-tally-row ${baby ? 'baby' : ''}">
+      <span class="ab-label">${label}</span>
+      <div class="big-ctrls">
+        <button class="big-tally-btn ${value === 0 ? 'disabled' : ''}" data-act="dec" data-key="${key}">−</button>
+        <span class="big-tally-num">${value}</span>
+        <button class="big-tally-btn" data-act="inc" data-key="${key}">+</button>
+      </div>
+    </div>`;
+}
+
+function renderTeamCompactTotal(trip, dayIdx) {
+  const total = teamGrandTotal(trip);
+  const pct = Math.min(100, (total / trip.goal) * 100);
+  const goalMet = total >= trip.goal;
+  const dayTotal = teamDayTotal(trip, dayIdx);
+  return `
+    <div class="scorecard compact ${goalMet ? 'goal-met' : ''}">
+      <div class="score-display">
+        <div>
+          <div class="score-label">Tally Total</div>
+          <div class="score-value">${total}<span class="total-of"> / ${trip.goal}</span></div>
+        </div>
+        <div>
+          <div class="score-label" style="text-align:right;">This Day</div>
+          <div class="status-badge" style="color:var(--forest);">${dayTotal} pts</div>
+        </div>
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>`;
+}
+
+function renderTeamDayEntry(trip, dayIdx) {
+  return trip.animals.map(a => {
+    const t = trip.teamTallies[a.id]?.[dayIdx] || { a: 0, b: 0 };
+    const tier = tierClass(a.points);
+    return `
+      <div class="tally-day-card">
+        <div class="animal-head">
+          <div>
+            <div class="animal-name">${escapeHtml(a.name)}</div>
+            ${a.subtitle ? `<div class="animal-sub">${escapeHtml(a.subtitle)}</div>` : ''}
+          </div>
+          <div class="pts-row">
+            <span class="pt-badge ${tier}">${a.points} PTS</span>
+            <span class="pt-badge baby">BABY ${babyPts(a)}</span>
+          </div>
+        </div>
+        ${renderBigTally(t.a, 'Adult', `team:${a.id}:${dayIdx}:a`)}
+        ${renderBigTally(t.b, 'Baby', `team:${a.id}:${dayIdx}:b`, true)}
+      </div>`;
+  }).join('');
+}
+
+function renderVersusCompactStandings(trip) {
+  const scored = trip.players.map(p => ({ player: p, score: versusPlayerScore(trip, p.id) }));
+  scored.sort((a, b) => b.score - a.score);
+  return `
+    <div class="standings">${scored.map((s, idx) => {
+      const a = trip.animals.find(x => x.id === s.player.teamAnimalId);
+      return `
+        <div class="standing-row ${idx === 0 ? 'first' : ''}">
+          <div class="rank">${idx + 1}</div>
+          <div>
+            <div class="who">${escapeHtml(s.player.name)}</div>
+            <div class="team-tag">Team ${escapeHtml(a?.name || '—')}</div>
+          </div>
+          <div class="score">${s.score}<small> pts</small></div>
+        </div>`;
+    }).join('')}</div>`;
+}
+
+function renderVersusDayEntry(trip, dayIdx) {
+  return trip.players.map(p => {
+    const a = trip.animals.find(x => x.id === p.teamAnimalId);
+    if (!a) return '';
+    const tier = tierClass(a.points);
+    const t = trip.playerTallies[p.id]?.[dayIdx] || { a: 0, b: 0 };
+    const dayScore = versusPlayerDayScore(trip, p.id, dayIdx);
+    const total = versusPlayerScore(trip, p.id);
+    return `
+      <div class="tally-day-card">
+        <div class="animal-head">
+          <div>
+            <div class="animal-name">${escapeHtml(p.name)}</div>
+            <div class="team">Team ${escapeHtml(a.name)}</div>
+            <div class="pts-row" style="margin-top:6px;">
+              <span class="pt-badge ${tier}">${a.points} PTS</span>
+              <span class="pt-badge baby">BABY ${babyPts(a)}</span>
+            </div>
+          </div>
+          <div class="player-score">${total}<small>total</small></div>
+        </div>
+        ${renderBigTally(t.a, 'Adult', `versus:${p.id}:${dayIdx}:a`)}
+        ${renderBigTally(t.b, 'Baby', `versus:${p.id}:${dayIdx}:b`, true)}
+        <div class="day-score-line">This day: ${dayScore} pts</div>
+      </div>`;
+  }).join('');
+}
+
+function renderFantasyCompactStandings(trip) {
+  const scored = trip.teams.map(t => ({ team: t, score: fantasyTeamScore(trip, t.id) }));
+  scored.sort((a, b) => b.score - a.score);
+  return `
+    <div class="standings">${scored.map((s, idx) => {
+      const cIdx = teamColorIndex(trip, s.team.id);
+      return `
+        <div class="standing-row ${idx === 0 ? 'first' : ''}">
+          <div class="rank">${idx + 1}</div>
+          <div>
+            <div class="who"><span class="owner-tag ${teamColorClass(cIdx)}" style="margin-top:0;">${escapeHtml(s.team.name)}</span></div>
+            <div class="team-tag">${escapeHtml(teamPlayerNames(trip, s.team))}</div>
+          </div>
+          <div class="score">${s.score}<small> pts</small></div>
+        </div>`;
+    }).join('')}</div>`;
+}
+
+function renderFantasyDayEntry(trip, dayIdx) {
+  return trip.animals.map(a => {
+    const t = trip.teamTallies[a.id]?.[dayIdx] || { a: 0, b: 0 };
+    const tier = tierClass(a.points);
+    const ownerId = trip.animalOwners[a.id];
+    const owner = trip.teams.find(x => x.id === ownerId);
+    const cIdx = teamColorIndex(trip, ownerId);
+    return `
+      <div class="tally-day-card">
+        <div class="animal-head">
+          <div>
+            <div class="animal-name">${escapeHtml(a.name)}</div>
+            ${a.subtitle ? `<div class="animal-sub">${escapeHtml(a.subtitle)}</div>` : ''}
+            <span class="owner-tag ${teamColorClass(cIdx)}">${escapeHtml(owner ? owner.name : '—')}</span>
+          </div>
+          <div class="pts-row">
+            <span class="pt-badge ${tier}">${a.points} PTS</span>
+            <span class="pt-badge baby">BABY ${babyPts(a)}</span>
+          </div>
+        </div>
+        ${renderBigTally(t.a, 'Adult', `team:${a.id}:${dayIdx}:a`)}
+        ${renderBigTally(t.b, 'Baby', `team:${a.id}:${dayIdx}:b`, true)}
+      </div>`;
+  }).join('');
+}
+
+function renderFantasySummary(trip) {
+  const scored = trip.teams.map(t => ({ team: t, score: fantasyTeamScore(trip, t.id) }));
+  scored.sort((a, b) => b.score - a.score);
+  const standingsHtml = scored.map((s, idx) => {
+    const cIdx = teamColorIndex(trip, s.team.id);
+    return `
+      <div class="standing-row ${idx === 0 ? 'first' : ''}">
+        <div class="rank">${idx + 1}</div>
+        <div>
+          <div class="who"><span class="owner-tag ${teamColorClass(cIdx)}" style="margin-top:0;">${escapeHtml(s.team.name)}</span></div>
+          <div class="team-tag">${escapeHtml(teamPlayerNames(trip, s.team))}</div>
+        </div>
+        <div class="score">${s.score}<small> pts</small></div>
+      </div>`;
+  }).join('');
+  const cardsHtml = scored.map(s => {
+    const t = s.team;
+    const cIdx = teamColorIndex(trip, t.id);
+    const owned = trip.animals.filter(a => trip.animalOwners[a.id] === t.id)
+      .sort((a, b) => animalTotalPoints(trip, b) - animalTotalPoints(trip, a));
+    const rows = owned.map(a => {
+      const pts = animalTotalPoints(trip, a);
+      const counts = trip.days.reduce((acc, _, i) => { const tt = trip.teamTallies[a.id]?.[i] || { a: 0, b: 0 }; acc.a += tt.a; acc.b += tt.b; return acc; }, { a: 0, b: 0 });
+      return `
+        <div class="day-tally-row">
+          <div class="date-label">${escapeHtml(a.name)}</div>
+          <div class="ab-block"><span class="lbl">A</span><span class="tally-num">${counts.a}</span></div>
+          <div class="ab-block b"><span class="lbl">B</span><span class="tally-num">${counts.b}</span></div>
+          <div class="day-score">${pts}</div>
+        </div>`;
+    }).join('');
+    return `
+      <div class="player-card">
+        <div class="top">
+          <div class="who-block">
+            <div class="player-name">${escapeHtml(t.name)}</div>
+            <div class="team"><span class="owner-tag ${teamColorClass(cIdx)}">roster</span> ${escapeHtml(teamPlayerNames(trip, t))}</div>
+          </div>
+          <div class="player-score">${s.score}<small>points</small></div>
+        </div>
+        ${rows || '<div class="empty-pick">No animals drafted</div>'}
+      </div>`;
+  }).join('');
+  const tallyGridCols = `grid-template-columns: minmax(120px, 1.3fr) ${trip.days.map(() => 'minmax(72px, 1fr)').join(' ')};`;
+  const tallyHeader = `<div class="grid-header" style="${tallyGridCols}"><div class="creature-h">Creature</div>${trip.days.map(d => `<div>${escapeHtml(formatDateShort(d.date))}</div>`).join('')}</div>`;
+  const tallyRows = trip.animals.map(a => {
+    const tier = tierClass(a.points);
+    const ownerId = trip.animalOwners[a.id];
+    const owner = trip.teams.find(x => x.id === ownerId);
+    const cIdx = teamColorIndex(trip, ownerId);
+    return `
+      <div class="grid-row" style="${tallyGridCols}">
+        <div class="creature-c">
+          <div class="animal-name">${escapeHtml(a.name)}</div>
+          <span class="owner-tag ${teamColorClass(cIdx)}">${escapeHtml(owner ? owner.name : '—')}</span>
+          <div class="pts-row">
+            <span class="pt-badge ${tier}">${a.points} PTS</span>
+            <span class="pt-badge baby">BABY ${babyPts(a)}</span>
+          </div>
+        </div>
+        ${trip.days.map((_, dayIdx) => renderTeamSummaryCell(trip, a, dayIdx)).join('')}
+      </div>`;
+  }).join('');
+  return `
+    <div class="standings">${standingsHtml}</div>
+    ${cardsHtml}
+    <div class="tally-grid-wrap"><div class="tally-grid">${tallyHeader}${tallyRows}</div></div>
+    <div class="field-rules">
+      <h3>Field Rules</h3>
+      <ul>
+        <li>Must be inside park boundaries to count.</li>
+        <li>Each animal scores for the team that drafted it.</li>
+        <li>A = adult · B = baby · babies always +1 over adult.</li>
+        <li>Anyone can log a sighting — points route to the owning team.</li>
+      </ul>
+    </div>`;
+}
+
+function renderSummary(trip) {
+  const body = trip.mode === 'team' ? renderTeamSummary(trip)
+    : trip.mode === 'fantasy' ? renderFantasySummary(trip)
+    : renderVersusSummary(trip);
+  return `${renderTripToggle()}${body}`;
+}
+
+function renderTeamSummary(trip) {
+  const total = teamGrandTotal(trip);
+  const pct = Math.min(100, (total / trip.goal) * 100);
+  const goalMet = total >= trip.goal;
+  const dayCount = trip.days.length;
+  const dayTotalsCols = `grid-template-columns: repeat(${dayCount}, 1fr);`;
+  const dayTotalsHtml = trip.days.map((d, i) => `<div class="day-total"><div class="label">${escapeHtml(formatDateShort(d.date))}</div><div class="num">${teamDayTotal(trip, i)}</div></div>`).join('');
+  const tallyGridCols = `grid-template-columns: minmax(120px, 1.3fr) ${trip.days.map(() => 'minmax(72px, 1fr)').join(' ')};`;
+  const tallyHeader = `<div class="grid-header" style="${tallyGridCols}"><div class="creature-h">Creature</div>${trip.days.map(d => `<div>${escapeHtml(formatDateShort(d.date))}</div>`).join('')}</div>`;
+  const tallyRows = trip.animals.map(a => {
+    const t = tierClass(a.points);
+    return `
+      <div class="grid-row" style="${tallyGridCols}">
+        <div class="creature-c">
+          <div class="animal-name">${escapeHtml(a.name)}</div>
+          ${a.subtitle ? `<div class="animal-sub">${escapeHtml(a.subtitle)}</div>` : ''}
+          <div class="pts-row">
+            <span class="pt-badge ${t}">${a.points} PTS</span>
+            <span class="pt-badge baby">BABY ${babyPts(a)}</span>
+          </div>
+        </div>
+        ${trip.days.map((_, dayIdx) => renderTeamSummaryCell(trip, a, dayIdx)).join('')}
+      </div>`;
+  }).join('');
+  return `
+    <div class="scorecard ${goalMet ? 'goal-met' : ''}">
+      <div class="score-display">
+        <div>
+          <div class="score-label">Tally Total</div>
+          <div class="score-value">${total}<span class="total-of"> / ${trip.goal}</span></div>
+        </div>
+        <div>
+          <div class="score-label" style="text-align:right;">Status</div>
+          <div class="status-badge" style="${goalMet ? 'color:var(--forest);' : ''}">${goalMet ? '★ GOAL HIT ★' : 'IN THE FIELD'}</div>
+        </div>
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="day-totals" style="${dayTotalsCols}">${dayTotalsHtml}</div>
+    </div>
+    <div class="tally-grid-wrap"><div class="tally-grid">${tallyHeader}${tallyRows}</div></div>
+    <div class="field-rules">
+      <h3>Field Rules</h3>
+      <ul>
+        <li>Must be inside park boundaries to count.</li>
+        <li>A = adult · B = baby · babies always +1 over adult.</li>
+        <li>Group sightings stack (e.g. otter + beaver same day = 2 tallies).</li>
+        <li>Players: ${escapeHtml(trip.players.map(p => p.name).join(', '))}.</li>
+      </ul>
+    </div>`;
+}
+
+function renderTeamSummaryCell(trip, animal, dayIdx) {
+  const t = trip.teamTallies[animal.id]?.[dayIdx] || { a: 0, b: 0 };
+  const pts = (t.a * animal.points) + (t.b * babyPts(animal));
+  return `
+    <div class="day-cell ro">
+      <div class="ro-line"><span class="ab">A</span><span class="ro-n">${t.a}</span></div>
+      <div class="ro-line baby"><span class="ab">B</span><span class="ro-n">${t.b}</span></div>
+      <div class="ro-pts">${pts}</div>
+    </div>`;
+}
+
+function renderVersusSummary(trip) {
+  const scored = trip.players.map(p => ({ player: p, score: versusPlayerScore(trip, p.id) }));
+  scored.sort((a, b) => b.score - a.score);
+  const standingsHtml = scored.map((s, idx) => {
+    const a = trip.animals.find(x => x.id === s.player.teamAnimalId);
+    return `
+      <div class="standing-row ${idx === 0 ? 'first' : ''}">
+        <div class="rank">${idx + 1}</div>
+        <div>
+          <div class="who">${escapeHtml(s.player.name)}</div>
+          <div class="team-tag">Team ${escapeHtml(a?.name || '—')}</div>
+        </div>
+        <div class="score">${s.score}<small> pts</small></div>
+      </div>`;
+  }).join('');
+  const cardsHtml = trip.players.map(p => {
+    const a = trip.animals.find(x => x.id === p.teamAnimalId);
+    if (!a) return '';
+    const t = tierClass(a.points);
+    const total = versusPlayerScore(trip, p.id);
+    const dayRows = trip.days.map((d, i) => {
+      const tally = trip.playerTallies[p.id]?.[i] || { a: 0, b: 0 };
+      const dayScore = versusPlayerDayScore(trip, p.id, i);
+      return `
+        <div class="day-tally-row">
+          <div class="date-label">${escapeHtml(formatDateShort(d.date))}</div>
+          <div class="ab-block"><span class="lbl">A</span><span class="tally-num">${tally.a}</span></div>
+          <div class="ab-block b"><span class="lbl">B</span><span class="tally-num">${tally.b}</span></div>
+          <div class="day-score">${dayScore}</div>
+        </div>`;
+    }).join('');
+    return `
+      <div class="player-card">
+        <div class="top">
+          <div class="who-block">
+            <div class="player-name">${escapeHtml(p.name)}</div>
+            <div class="team">Team ${escapeHtml(a.name)}</div>
+            <div class="pts-row">
+              <span class="pt-badge ${t}">${a.points} PTS</span>
+              <span class="pt-badge baby">BABY ${babyPts(a)}</span>
+            </div>
+          </div>
+          <div class="player-score">${total}<small>points</small></div>
+        </div>
+        ${dayRows}
+      </div>`;
+  }).join('');
+  return `
+    <div class="standings">${standingsHtml}</div>
+    ${cardsHtml}
+    <div class="field-rules">
+      <h3>Field Rules</h3>
+      <ul>
+        <li>Must be inside park boundaries to count.</li>
+        <li>You only score for sightings of your animal team.</li>
+        <li>A = adult · B = baby · babies always +1 over adult.</li>
+      </ul>
+    </div>`;
+}
+
+function wireTripControls(trip) {
+  document.querySelectorAll('[data-subview]').forEach(btn => {
+    btn.addEventListener('click', e => { tripSubView = e.currentTarget.dataset.subview; renderTrip(); });
+  });
+  document.querySelectorAll('[data-day]').forEach(btn => {
+    btn.addEventListener('click', e => { currentDayIdx = parseInt(e.currentTarget.dataset.day, 10); renderTrip(); });
+  });
+}
+
+function wireTallyButtons(trip) {
+  document.querySelectorAll('[data-act]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const { act, key } = e.currentTarget.dataset;
+      handleTallyChange(trip, act, key);
+    });
+  });
+}
+
+function handleTallyChange(trip, act, key) {
+  const parts = key.split(':');
+  const kind = parts[0];
+  const dayIdx = parseInt(parts[2], 10);
+  const type = parts[3];
+  const bucket = kind === 'team' ? trip.teamTallies[parts[1]][dayIdx] : trip.playerTallies[parts[1]][dayIdx];
+  if (act === 'inc') bucket[type]++;
+  else if (act === 'dec') bucket[type] = Math.max(0, bucket[type] - 1);
+  trip.lastModified = Date.now();
+  saveAppState();
+  renderTrip();
+}
+
+document.getElementById('deleteTripBtn').addEventListener('click', () => {
+  if (!currentTripId) return;
+  const t = appState.trips[currentTripId];
+  if (!confirm(`Delete the "${t.park}" journal? This can't be undone.`)) return;
+  delete appState.trips[currentTripId];
+  saveAppState();
+  currentTripId = null;
+  renderHome();
+  history.back();
+});
+
+let deferredInstall = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; document.getElementById('installArea').classList.add('visible'); });
+document.getElementById('installBtn').addEventListener('click', async () => {
+  if (!deferredInstall) return;
+  deferredInstall.prompt();
+  await deferredInstall.userChoice;
+  deferredInstall = null;
+  document.getElementById('installArea').classList.remove('visible');
+});
+window.addEventListener('appinstalled', () => document.getElementById('installArea').classList.remove('visible'));
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(err => console.error('SW reg fail:', err)));
+}
+
+loadAppState();
+renderHome();
+history.replaceState({ view: 'home' }, '', '#home');
+</script>
+</body>
+</html>
