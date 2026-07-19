@@ -336,6 +336,9 @@ input:focus, select:focus { border-color: var(--rust); }
 .trail-pill.on { background: var(--gold); color: var(--brown); border: 1.5px solid var(--brown); box-shadow: 2px 2px 0 var(--brown); }
 .scat-note { font-family: 'Special Elite', monospace; font-size: 11px; color: var(--rust); background: var(--cream); border: 1px dashed var(--rust); border-radius: 2px; padding: 9px 11px; }
 .log-btn { margin-top: 14px; }
+.qty-row { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; }
+.qty-row .q-label { font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--forest-light); }
+.qty-row .days-stepper input { width: 46px; }
 
 /* --- Day ledger --- */
 .ledger { background: var(--paper); border: 1.5px solid var(--forest); border-radius: 3px; box-shadow: 2px 2px 0 var(--forest); padding: 4px 12px; }
@@ -1388,7 +1391,7 @@ function renderVersusPickList() {
       <div class="versus-row">
         <div class="name">${escapeHtml(displayName)}</div>
         <select data-versus-pick="${p.id}">
-          ${formState.animals.map(a => `<option value="${a.id}" ${p.teamAnimalId === a.id ? 'selected' : ''}>${escapeHtml(a.name)} (${a.points}/${a.points + 1})</option>`).join('')}
+          ${formState.animals.slice().sort((x, y) => x.name.localeCompare(y.name)).map(a => `<option value="${a.id}" ${p.teamAnimalId === a.id ? 'selected' : ''}>${escapeHtml(a.name)} (${a.points}/${a.points + 1})</option>`).join('')}
         </select>
       </div>`;
   }).join('');
@@ -1801,9 +1804,11 @@ function ensureLogForm(trip) {
       playerId: trip.players[0] ? trip.players[0].id : null,
       form: 'seen',
       age: 'adult',
-      trail: false
+      trail: false,
+      qty: 1
     };
   }
+  if (!logForm.qty || logForm.qty < 1) logForm.qty = 1;
   const m = tripModes(trip);
   if ((logForm.form === 'scat' && !m.scat) || (logForm.form === 'tracks' && !m.tracks)) logForm.form = 'seen';
   return logForm;
@@ -1835,7 +1840,7 @@ function renderLogCard(trip) {
     <label class="field">
       <span class="label">Animal</span>
       <select id="logAnimal">
-        ${trip.animals.map(x => `<option value="${x.id}" ${lf.animalId === x.id ? 'selected' : ''}>${escapeHtml(x.name)} — ${x.points} pts</option>`).join('')}
+        ${trip.animals.slice().sort((x, y) => x.name.localeCompare(y.name)).map(x => `<option value="${x.id}" ${lf.animalId === x.id ? 'selected' : ''}>${escapeHtml(x.name)} — ${x.points} pts</option>`).join('')}
       </select>
     </label>`;
   const kindSeg = anyModeOn(trip) ? `
@@ -1854,12 +1859,22 @@ function renderLogCard(trip) {
     </div>` : `
     <div class="scat-note">${lf.form === 'scat' ? 'Scat find' : 'Track find'}${a ? ` — ${a.predator ? 'predator, full points' : 'half points, rounded up'}` : ''}</div>`;
   const pts = a ? sightingPoints(trip, { animalId: a.id, form: lf.form, age: lf.age, trail: lf.trail }) : 0;
+  const total = pts * lf.qty;
+  const btnLabel = lf.qty > 1 ? `✚ Log ${lf.qty} — ${total} pts` : `✚ Log It — ${total} pt${total === 1 ? '' : 's'}`;
   return `
     <div class="log-card">
       ${who}
       ${kindSeg}
       ${detail}
-      <button type="button" class="primary-btn log-btn" id="logSubmit">✚ Log It — ${pts} pt${pts === 1 ? '' : 's'}</button>
+      <div class="qty-row">
+        <span class="q-label">How Many</span>
+        <div class="days-stepper">
+          <button type="button" id="qtyDown">−</button>
+          <input type="number" id="qtyNum" value="${lf.qty}" readonly>
+          <button type="button" id="qtyUp">+</button>
+        </div>
+      </div>
+      <button type="button" class="primary-btn log-btn" id="logSubmit">${btnLabel}</button>
     </div>`;
 }
 
@@ -1898,16 +1913,19 @@ function logSighting(trip) {
   const lf = ensureLogForm(trip);
   const a = logFormAnimal(trip, lf);
   if (!a) return;
-  trip.sightings.push({
-    id: newId('s'),
-    animalId: a.id,
-    day: currentDayIdx,
-    form: lf.form,
-    age: lf.form === 'seen' ? lf.age : 'adult',
-    trail: lf.form === 'seen' ? lf.trail : false,
-    playerId: trip.mode === 'versus' ? lf.playerId : null,
-    ts: Date.now()
-  });
+  for (let i = 0; i < lf.qty; i++) {
+    trip.sightings.push({
+      id: newId('s'),
+      animalId: a.id,
+      day: currentDayIdx,
+      form: lf.form,
+      age: lf.form === 'seen' ? lf.age : 'adult',
+      trail: lf.form === 'seen' ? lf.trail : false,
+      playerId: trip.mode === 'versus' ? lf.playerId : null,
+      ts: Date.now() + i
+    });
+  }
+  lf.qty = 1;   // quantity resets after each log; animal/age/trail stay sticky
   trip.lastModified = Date.now();
   saveAppState();
   renderTrip();
@@ -1923,6 +1941,10 @@ function wireLogControls(trip) {
   document.querySelectorAll('#logAge [data-age]').forEach(b => b.addEventListener('click', e => { lf.age = e.currentTarget.dataset.age; renderTrip(); }));
   const trail = document.getElementById('logTrail');
   if (trail) trail.addEventListener('click', () => { lf.trail = !lf.trail; renderTrip(); });
+  const qtyUp = document.getElementById('qtyUp');
+  if (qtyUp) qtyUp.addEventListener('click', () => { if (lf.qty < 99) { lf.qty++; renderTrip(); } });
+  const qtyDown = document.getElementById('qtyDown');
+  if (qtyDown) qtyDown.addEventListener('click', () => { if (lf.qty > 1) { lf.qty--; renderTrip(); } });
   const submit = document.getElementById('logSubmit');
   if (submit) submit.addEventListener('click', () => logSighting(trip));
   document.querySelectorAll('[data-del-sighting]').forEach(b => b.addEventListener('click', e => {
