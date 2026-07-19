@@ -1414,7 +1414,7 @@ function renderAnimalEditor() {
   if (formState.animalEditorOpen) { editor.classList.add('open'); btn.textContent = 'Hide ↑'; }
   else { editor.classList.remove('open'); btn.textContent = 'Edit ↓'; return; }
   const list = document.getElementById('animalEditList');
-  list.innerHTML = formState.animals.map(a => `
+  list.innerHTML = formState.animals.slice().sort((x, y) => x.name.localeCompare(y.name)).map(a => `
     <div class="animal-edit-row">
       <input type="text" data-animal-name="${a.id}" value="${escapeHtml(a.name)}" placeholder="Animal name">
       <input type="number" data-animal-points="${a.id}" value="${a.points}" min="0" max="99">
