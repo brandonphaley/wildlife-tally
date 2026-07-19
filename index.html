@@ -336,6 +336,11 @@ input:focus, select:focus { border-color: var(--rust); }
 .trail-pill.on { background: var(--gold); color: var(--brown); border: 1.5px solid var(--brown); box-shadow: 2px 2px 0 var(--brown); }
 .scat-note { font-family: 'Special Elite', monospace; font-size: 11px; color: var(--rust); background: var(--cream); border: 1px dashed var(--rust); border-radius: 2px; padding: 9px 11px; }
 .log-btn { margin-top: 14px; }
+.add-animal-link { font-family: 'Special Elite', monospace; background: none; border: none; color: var(--rust); cursor: pointer; font-size: 11px; letter-spacing: 0.14em; text-decoration: underline; text-transform: uppercase; padding: 0; margin: -6px 0 10px; display: block; }
+.add-animal-form { display: grid; grid-template-columns: minmax(0, 1fr) 52px 40px auto; gap: 6px; align-items: center; margin-bottom: 12px; padding: 10px; background: var(--cream); border: 1px dashed var(--forest-light); border-radius: 2px; }
+.add-animal-form input[type=text] { font-size: 13px; padding: 8px 9px; }
+.add-animal-form input[type=number] { font-size: 13px; padding: 8px 6px; text-align: center; }
+.add-animal-form .team-pick { grid-column: 1 / -1; font-size: 13px; padding: 8px 9px; }
 .qty-row { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; }
 .qty-row .q-label { font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--forest-light); }
 .qty-row .days-stepper input { width: 46px; }
@@ -1843,6 +1848,19 @@ function renderLogCard(trip) {
         ${trip.animals.slice().sort((x, y) => x.name.localeCompare(y.name)).map(x => `<option value="${x.id}" ${lf.animalId === x.id ? 'selected' : ''}>${escapeHtml(x.name)} — ${x.points} pts</option>`).join('')}
       </select>
     </label>`;
+  const addAnimal = trip.mode === 'versus' ? '' : `
+    <button type="button" class="add-animal-link" id="addAnimalToggle">${lf.adding ? '× Cancel' : '＋ New animal for this trip'}</button>
+    ${lf.adding ? `
+    <div class="add-animal-form">
+      <input type="text" id="addAnimalName" placeholder="Animal name" maxlength="40">
+      <input type="number" id="addAnimalPts" value="2" min="0" max="99" title="Points">
+      <label class="pred-check" title="Predator — scat & tracks score full points"><input type="checkbox" id="addAnimalPred"><span>P</span></label>
+      <button type="button" class="secondary-btn" id="addAnimalConfirm">Add</button>
+      ${trip.mode === 'fantasy' ? `
+      <select id="addAnimalTeam" class="team-pick">
+        ${trip.teams.map(t => `<option value="${t.id}">Owned by ${escapeHtml(t.name)}</option>`).join('')}
+      </select>` : ''}
+    </div>` : ''}`;
   const kindSeg = anyModeOn(trip) ? `
     <div class="seg" id="logKind">
       <button type="button" data-kind="seen" class="${seen ? 'active' : ''}">Seen</button>
@@ -1864,6 +1882,7 @@ function renderLogCard(trip) {
   return `
     <div class="log-card">
       ${who}
+      ${trip.mode === 'versus' ? '' : addAnimal}
       ${kindSeg}
       ${detail}
       <div class="qty-row">
@@ -1941,6 +1960,25 @@ function wireLogControls(trip) {
   document.querySelectorAll('#logAge [data-age]').forEach(b => b.addEventListener('click', e => { lf.age = e.currentTarget.dataset.age; renderTrip(); }));
   const trail = document.getElementById('logTrail');
   if (trail) trail.addEventListener('click', () => { lf.trail = !lf.trail; renderTrip(); });
+  const addToggle = document.getElementById('addAnimalToggle');
+  if (addToggle) addToggle.addEventListener('click', () => { lf.adding = !lf.adding; renderTrip(); });
+  const addConfirm = document.getElementById('addAnimalConfirm');
+  if (addConfirm) addConfirm.addEventListener('click', () => {
+    const name = document.getElementById('addAnimalName').value.trim();
+    if (!name) { alert('Give the animal a name.'); return; }
+    const pts = Math.max(0, parseInt(document.getElementById('addAnimalPts').value || '0', 10));
+    const animal = { id: newId('a'), name, subtitle: 'Added mid-trip', points: pts, predator: document.getElementById('addAnimalPred').checked };
+    trip.animals.push(animal);
+    if (trip.mode === 'fantasy') {
+      const teamSel = document.getElementById('addAnimalTeam');
+      trip.animalOwners[animal.id] = teamSel ? teamSel.value : trip.teams[0].id;
+    }
+    lf.animalId = animal.id;   // select the new animal so it can be logged immediately
+    lf.adding = false;
+    trip.lastModified = Date.now();
+    saveAppState();
+    renderTrip();
+  });
   const qtyUp = document.getElementById('qtyUp');
   if (qtyUp) qtyUp.addEventListener('click', () => { if (lf.qty < 99) { lf.qty++; renderTrip(); } });
   const qtyDown = document.getElementById('qtyDown');
