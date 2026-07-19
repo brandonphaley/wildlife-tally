@@ -1,7 +1,7 @@
 // Service worker for Wildlife Tally PWA
 // Cache-first for app shell (fonts are self-hosted, precached below), network fallback
 
-const CACHE = 'wildlife-tally-v18';
+const CACHE = 'wildlife-tally-v19';
 const CORE_FILES = [
   './',
   './index.html',

@@ -52,25 +52,34 @@ Open `index.html`, find the `PARKS` registry near the top of the `<script>` sect
 
 New park automatically appears in the park dropdown. Trips snapshot the animal list at creation, so editing a preset later won't affect existing journals.
 
+## Scoring
+
+- Seen adult = animal's points · baby = always +1 over adult.
+- Spotted while **on a trail** = +1 more (sightings only).
+- **Scat Mode / Tracks Mode** (optional, chosen at trip creation): a scat or track find scores full points for predators, half rounded up for everything else. No baby/trail modifiers on sign finds.
+
 ## Data model
 
-One `localStorage` key: `wildlife-tally-app-v1`.
+One `localStorage` key: `wildlife-tally-app-v2`. (v1 data auto-migrates on first load; the v1 key is kept as a backup.)
 
 ```
 {
   trips: {
     "trip-abc123": {
       id, journalNum, park, parkId,
-      mode: "team" | "versus",
+      mode: "team" | "versus" | "fantasy",
+      modes: { scat: bool, tracks: bool },
       days: [{ date: "2026-05-28" }, ...],
-      players: [{ id, name, teamAnimalId }, ...],
-      animals: [{ id, name, subtitle, points }, ...],
+      players: [{ id, name, teamAnimalId, teamId }, ...],
+      animals: [{ id, name, subtitle, points, predator }, ...],
       goal,
-      teamTallies,
-      playerTallies,
+      sightings: [{ id, animalId, day, form: "seen"|"scat"|"tracks",
+                    age: "adult"|"baby", trail: bool, playerId, ts }, ...],
       created, lastModified
     }
   },
   nextJournalNum: 4
 }
 ```
+
+Every sighting is its own ledger entry — the Tally tab logs them via the dropdown form, the day ledger lists and deletes them, and the Totals/Summary tabs derive all math from the list.

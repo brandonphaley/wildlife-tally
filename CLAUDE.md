@@ -17,7 +17,11 @@ Vanilla HTML/CSS/JS in a single `index.html`. No build step. No framework. Runs 
 - **Park registry pattern.** `PARKS` is a config object at the top of the `<script>` block in `index.html`. Adding a new park = adding one new entry with `{ id, name, region, defaultGoal, animals: [...] }`. No other code changes needed. New parks automatically show up in the new-trip dropdown.
 - **Per-trip animal snapshots.** When a new trip is created, the park's animal list is deep-cloned into the trip object. Edits to a park preset later do NOT retroactively affect existing trips. This is intentional — preserve trip history.
 - **Baby points = adult + 1, always.** Universal rule. Don't add per-animal baby overrides — the uniform rule is the simplification that kept the data model clean. Bison/elk with 0 adult points still gets 1 baby point because the rule applies.
-- **One localStorage key.** `wildlife-tally-app-v1` holds the entire app state. If the data shape changes, bump the version suffix and write a migration. Don't silently break existing user data.
+- **Trail bonus = +1, always.** A sighting logged "on trail" scores one extra point. Applies to seen animals only, never to scat/tracks.
+- **Sightings ledger, not counters.** Every logged sighting is its own record in `trip.sightings[]`: `{ id, animalId, day, form: 'seen'|'scat'|'tracks', age: 'adult'|'baby', trail, playerId, ts }`. ALL scores derive from this list through `sightingPoints()` — never store computed totals. `playerId` is set only in versus mode.
+- **Advanced modes are per-trip flags.** `trip.modes = { scat, tracks }` chosen at trip creation. Scat/track finds score full points for `predator: true` animals, half rounded up otherwise. New modes should follow this pattern: a flag in `trip.modes`, a `form` value on sightings, scoring inside `sightingPoints()`.
+- **One animal per entry, no slash-combos.** Presets list each species separately (split from the old combined entries; each kept the group's point value). Umbrella categories with one name ("Owls", "Wading Birds", "Bats") are fine. Every park preset includes Striped Skunk (2) and Snake (2). `predator: true` marks Carnivora + raptors + crocodilians + snakes.
+- **One localStorage key.** `wildlife-tally-app-v2` holds the entire app state. If the data shape changes, bump the version suffix and write a migration. Don't silently break existing user data. (v1 counter data auto-migrates to v2 sightings on first load; the v1 key is left in place as a backup.)
 - **Goal auto-fills from park × days.** `PARK_PER_DAY` (map near `DEFAULT_PARK`) holds a typical points-per-day estimate per park. `suggestedGoal(parkId, days)` returns `perDay × days` rounded to the nearest 5. The new-trip form pre-fills the goal from this and re-computes it when park or days change, *unless* the user types in the goal field (`formState.goalEdited` flag) — a manual value sticks until they switch parks or start a new trip. New parks without a `PARK_PER_DAY` entry fall back to `defaultGoal/3`, so `defaultGoal` is now only a fallback.
 - **No frameworks, no build step.** Adding React/Vue/Vite/anything is a significant decision and should be discussed with Brandon before doing it.
 
@@ -51,7 +55,7 @@ The app is a **vintage national park field journal**. Maintain this on every scr
 
 ## Current state
 
-Deployed and live at **https://brandonphaley.github.io/wildlife-tally/** (GitHub Pages, repo `brandonphaley/wildlife-tally`, `main` branch root). Fonts are self-hosted and precached — zero external network dependencies; the app is fully offline-capable once installed. Not yet verified on Brandon's actual Android phone.
+Deployed and live at **https://brandonphaley.github.io/wildlife-tally/** (GitHub Pages, repo `brandonphaley/wildlife-tally`, `main` branch root). Fonts are self-hosted and precached — zero external network dependencies; the app is fully offline-capable once installed. Field-tested by the family for a week (July 2026); that feedback produced the sightings-ledger release: dropdown submission page with per-day ledger, Totals tab, split animal entries, trail bonus, and Scat/Tracks modes.
 
 Deploying an update: commit, push to `main`, and bump `CACHE` in `sw.js` — Pages rebuilds automatically in ~1 minute.
 

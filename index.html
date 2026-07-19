@@ -319,6 +319,56 @@ input:focus, select:focus { border-color: var(--rust); }
 .draft-roster .empty-pick { font-family: 'Special Elite', monospace; font-size: 10px; color: var(--brown); opacity: 0.5; font-style: italic; }
 .owner-tag { font-family: 'Special Elite', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; color: var(--paper); display: inline-block; margin-top: 4px; }
 
+/* --- Three-tab trip toggle --- */
+.view-toggle.three { grid-template-columns: 1fr 1fr 1fr; }
+
+/* --- Log-a-sighting card --- */
+.log-card { background: var(--paper); border: 2px solid var(--forest); border-radius: 4px; padding: 22px 16px 16px; margin-bottom: 20px; position: relative; box-shadow: 0 4px 0 var(--forest), 0 7px 14px var(--shadow); }
+.log-card::before { content: 'LOG A SIGHTING'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--forest); color: var(--paper); font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.3em; padding: 3px 14px; white-space: nowrap; }
+.log-card .field { margin-bottom: 12px; }
+.seg { display: flex; gap: 6px; margin-bottom: 10px; }
+.seg button { flex: 1; font-family: 'Special Elite', monospace; text-transform: uppercase; letter-spacing: 0.1em; font-size: 12px; padding: 11px 6px; border: 1.5px solid var(--forest-light); background: var(--cream); color: var(--forest); border-radius: 2px; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.seg button.active { background: var(--forest); color: var(--paper); border-color: var(--forest); box-shadow: 2px 2px 0 var(--brown); }
+.seg button.active.baby { background: var(--gold); color: var(--brown); border-color: var(--brown); }
+.seg-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: stretch; }
+.seg-row .seg { margin-bottom: 0; }
+.trail-pill { font-family: 'Special Elite', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 11px 12px; border: 1.5px dashed var(--forest-light); background: var(--cream); color: var(--forest-light); border-radius: 2px; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.trail-pill.on { background: var(--gold); color: var(--brown); border: 1.5px solid var(--brown); box-shadow: 2px 2px 0 var(--brown); }
+.scat-note { font-family: 'Special Elite', monospace; font-size: 11px; color: var(--rust); background: var(--cream); border: 1px dashed var(--rust); border-radius: 2px; padding: 9px 11px; }
+.log-btn { margin-top: 14px; }
+
+/* --- Day ledger --- */
+.ledger { background: var(--paper); border: 1.5px solid var(--forest); border-radius: 3px; box-shadow: 2px 2px 0 var(--forest); padding: 4px 12px; }
+.ledger-row { display: grid; grid-template-columns: minmax(0, 1fr) auto 30px; gap: 8px; align-items: center; padding: 9px 0; border-bottom: 1px dashed var(--cream-dark); }
+.ledger-row:last-child { border-bottom: none; }
+.ledger-row .l-name { font-family: 'Alfa Slab One', serif; font-size: 14px; color: var(--forest); margin-right: 6px; }
+.ledger-row .l-who { font-family: 'Special Elite', monospace; font-size: 10px; color: var(--rust); text-transform: uppercase; letter-spacing: 0.08em; margin-right: 6px; }
+.ledger-row .l-badges .pt-badge { margin-right: 3px; }
+.ledger-row .l-pts { font-family: 'Alfa Slab One', serif; font-size: 18px; color: var(--forest); }
+.ledger-row .l-del { width: 28px; height: 30px; border: 1.5px solid var(--rust); background: transparent; color: var(--rust); font-family: 'Alfa Slab One', serif; font-size: 13px; border-radius: 2px; cursor: pointer; }
+.ledger-row .l-del:hover { background: var(--rust); color: var(--paper); }
+.ledger-empty { font-family: 'Special Elite', monospace; font-size: 12px; color: var(--brown); opacity: 0.65; text-align: center; padding: 24px 12px; background: var(--paper); border: 2px dashed var(--forest-light); border-radius: 4px; line-height: 1.7; }
+
+/* --- Trip totals --- */
+.totals-wrap { background: var(--forest-light); border: 1.5px solid var(--forest); border-radius: 3px; box-shadow: 2px 2px 0 var(--forest); overflow: hidden; display: grid; gap: 1px; }
+.totals-head, .totals-row { display: grid; gap: 1px; }
+.totals-head > .th { background: var(--forest); color: var(--paper); font-family: 'Special Elite', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; text-align: center; padding: 8px 4px; }
+.totals-head > .th.creature { text-align: left; padding-left: 10px; }
+.totals-row > div { background: var(--paper); padding: 8px 6px; }
+.totals-row .creature { padding-left: 10px; }
+.totals-row .tn { font-family: 'Alfa Slab One', serif; font-size: 16px; color: var(--forest); text-align: center; align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
+.totals-row .tn small { font-family: 'Special Elite', monospace; font-size: 8px; color: var(--brown); opacity: 0.7; letter-spacing: 0.05em; font-weight: normal; }
+.totals-row .tn.pts { color: var(--rust); }
+.totals-row.quiet > div { opacity: 0.45; }
+.totals-quiet-label { background: var(--cream); font-family: 'Special Elite', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--rust); padding: 6px 10px; }
+.sign-line { font-family: 'Special Elite', monospace; font-size: 11px; color: var(--forest-light); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 10px; text-align: center; }
+
+/* --- Predator checkbox (animal editor) --- */
+.animal-edit-row { grid-template-columns: minmax(0, 1fr) 52px 40px 32px; }
+.pred-check { display: flex; align-items: center; justify-content: center; height: 34px; border: 1.5px solid var(--forest-light); border-radius: 2px; background: var(--cream); cursor: pointer; font-family: 'Alfa Slab One', serif; font-size: 12px; color: var(--forest-light); user-select: none; }
+.pred-check input { position: absolute; opacity: 0; pointer-events: none; }
+.pred-check:has(input:checked) { background: var(--rust); border-color: var(--rust); color: var(--paper); }
+
 @media (max-width: 520px) {
   .score-value { font-size: 38px; }
   .day-total .num { font-size: 18px; }
@@ -414,13 +464,21 @@ input:focus, select:focus { border-color: var(--rust); }
       <div id="fantasyAssignList"></div>
     </div>
     <div class="form-section">
+      <div class="section-title">Advanced Scoring</div>
+      <div class="helper">Trail bonus is always on: spotting an animal while on a trail scores +1. The modes below also count animal sign — predators score full points, everything else half (rounded up).</div>
+      <div class="mode-toggle">
+        <label><input type="checkbox" id="modeScat"><span class="pill">Scat Mode<small>Droppings count</small></span></label>
+        <label><input type="checkbox" id="modeTracks"><span class="pill">Tracks Mode<small>Prints count</small></span></label>
+      </div>
+    </div>
+    <div class="form-section">
       <div class="section-title">Animals & Points</div>
       <div class="animal-summary">
         <span id="animalSummaryText">— animals loaded</span>
         <button type="button" id="toggleAnimalEditor">Edit ↓</button>
       </div>
       <div class="animal-editor" id="animalEditor">
-        <div class="helper">Baby points are always +1 over adult.</div>
+        <div class="helper">Baby points are always +1 over adult. P = predator — full points for scat &amp; tracks.</div>
         <div id="animalEditList"></div>
         <div class="animal-edit-actions">
           <button type="button" class="secondary-btn" id="addAnimalBtn">+ Add Animal</button>
@@ -458,19 +516,32 @@ const PARKS = {
     region: 'Wyoming / Montana',
     defaultGoal: 45,
     animals: [
-      { id: 'mythical',     name: 'Mythical',                 subtitle: 'Wolverine / Mt. Lion / Lynx',         points: 15 },
-      { id: 'wolf',         name: 'Wolf',                     subtitle: '',                                    points: 8  },
-      { id: 'pinemarten',   name: 'Pine Marten',              subtitle: '',                                    points: 6  },
+      { id: 'wolverine',    name: 'Wolverine',                subtitle: 'Almost never seen',                   points: 15, predator: true },
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15, predator: true },
+      { id: 'lynx',         name: 'Canada Lynx',              subtitle: 'Almost never seen',                   points: 15, predator: true },
+      { id: 'wolf',         name: 'Wolf',                     subtitle: '',                                    points: 8,  predator: true },
+      { id: 'pinemarten',   name: 'Pine Marten',              subtitle: '',                                    points: 6,  predator: true },
       { id: 'moose',        name: 'Moose',                    subtitle: '',                                    points: 5  },
       { id: 'mtngoat',      name: 'Mountain Goat',            subtitle: '',                                    points: 4  },
-      { id: 'foxcoyote',    name: 'Fox / Coyote',             subtitle: '',                                    points: 4  },
-      { id: 'bear',         name: 'Bear',                     subtitle: 'Grizzly or Black',                    points: 3  },
-      { id: 'obb',          name: 'Otter / Beaver / Badger',  subtitle: '',                                    points: 3  },
+      { id: 'fox',          name: 'Red Fox',                  subtitle: '',                                    points: 4,  predator: true },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 4,  predator: true },
+      { id: 'grizzly',      name: 'Grizzly Bear',             subtitle: '',                                    points: 3,  predator: true },
+      { id: 'blackbear',    name: 'Black Bear',               subtitle: '',                                    points: 3,  predator: true },
+      { id: 'otter',        name: 'River Otter',              subtitle: '',                                    points: 3,  predator: true },
+      { id: 'beaver',       name: 'Beaver',                   subtitle: '',                                    points: 3  },
+      { id: 'badger',       name: 'Badger',                   subtitle: '',                                    points: 3,  predator: true },
       { id: 'bighorn',      name: 'Bighorn Sheep',            subtitle: '',                                    points: 2  },
       { id: 'harlequin',    name: 'Harlequin Duck',           subtitle: '',                                    points: 2  },
-      { id: 'eos',          name: 'Eagle / Osprey / Swan',    subtitle: 'Bald eagle, osprey, trumpeter swan',  points: 2  },
-      { id: 'mpc',          name: 'Marmot / Pika / Crane',    subtitle: 'Marmot, pika, sandhill crane',        points: 1  },
-      { id: 'bisonelk',     name: 'Bison / Elk',              subtitle: 'Adults free — babies only',           points: 0  }
+      { id: 'eagle',        name: 'Bald Eagle',               subtitle: '',                                    points: 2,  predator: true },
+      { id: 'osprey',       name: 'Osprey',                   subtitle: '',                                    points: 2,  predator: true },
+      { id: 'swan',         name: 'Trumpeter Swan',           subtitle: '',                                    points: 2  },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Garter, bull snake',                  points: 2,  predator: true },
+      { id: 'marmot',       name: 'Marmot',                   subtitle: '',                                    points: 1  },
+      { id: 'pika',         name: 'Pika',                     subtitle: '',                                    points: 1  },
+      { id: 'crane',        name: 'Sandhill Crane',           subtitle: '',                                    points: 1  },
+      { id: 'bison',        name: 'Bison',                    subtitle: 'Adults free — babies only',           points: 0  },
+      { id: 'elk',          name: 'Elk',                      subtitle: 'Adults free — babies only',           points: 0  }
     ]
   },
   'glacier': {
@@ -479,21 +550,32 @@ const PARKS = {
     region: 'Montana',
     defaultGoal: 45,
     animals: [
-      { id: 'mythical',     name: 'Mythical',                 subtitle: 'Wolverine / Mt. Lion / Lynx',         points: 15 },
-      { id: 'wolf',         name: 'Wolf',                     subtitle: '',                                    points: 8  },
-      { id: 'pinemarten',   name: 'Pine Marten',              subtitle: '',                                    points: 6  },
+      { id: 'wolverine',    name: 'Wolverine',                subtitle: 'Almost never seen',                   points: 15, predator: true },
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15, predator: true },
+      { id: 'lynx',         name: 'Canada Lynx',              subtitle: 'Almost never seen',                   points: 15, predator: true },
+      { id: 'wolf',         name: 'Wolf',                     subtitle: '',                                    points: 8,  predator: true },
+      { id: 'pinemarten',   name: 'Pine Marten',              subtitle: '',                                    points: 6,  predator: true },
       { id: 'moose',        name: 'Moose',                    subtitle: 'Many Glacier — Fishercap',            points: 5  },
       { id: 'ptarmigan',    name: 'White-tailed Ptarmigan',   subtitle: 'Alpine — Logan Pass / Hidden Lake',   points: 5  },
-      { id: 'grizzly',      name: 'Grizzly Bear',             subtitle: 'Many Glacier',                        points: 4  },
-      { id: 'foxcoyote',    name: 'Fox / Coyote',             subtitle: '',                                    points: 4  },
+      { id: 'grizzly',      name: 'Grizzly Bear',             subtitle: 'Many Glacier',                        points: 4,  predator: true },
+      { id: 'fox',          name: 'Red Fox',                  subtitle: '',                                    points: 4,  predator: true },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 4,  predator: true },
       { id: 'harlequin',    name: 'Harlequin Duck',           subtitle: 'McDonald Creek',                      points: 3  },
-      { id: 'blackbear',    name: 'Black Bear',               subtitle: '',                                    points: 3  },
-      { id: 'obb',          name: 'Otter / Beaver / Badger',  subtitle: '',                                    points: 3  },
+      { id: 'blackbear',    name: 'Black Bear',               subtitle: '',                                    points: 3,  predator: true },
+      { id: 'otter',        name: 'River Otter',              subtitle: '',                                    points: 3,  predator: true },
+      { id: 'beaver',       name: 'Beaver',                   subtitle: '',                                    points: 3  },
+      { id: 'badger',       name: 'Badger',                   subtitle: '',                                    points: 3,  predator: true },
       { id: 'mtngoat',      name: 'Mountain Goat',            subtitle: 'Logan Pass',                          points: 2  },
       { id: 'bighorn',      name: 'Bighorn Sheep',            subtitle: 'Logan Pass',                          points: 2  },
-      { id: 'eo',           name: 'Eagle / Osprey',           subtitle: 'Bald, golden, osprey',                points: 2  },
-      { id: 'marmotpika',   name: 'Marmot / Pika',            subtitle: 'Hoary marmot, pika',                  points: 1  },
-      { id: 'deerelk',      name: 'Deer / Elk',               subtitle: 'Adults free — babies only',           points: 0  }
+      { id: 'baldeagle',    name: 'Bald Eagle',               subtitle: '',                                    points: 2,  predator: true },
+      { id: 'goldeneagle',  name: 'Golden Eagle',             subtitle: '',                                    points: 2,  predator: true },
+      { id: 'osprey',       name: 'Osprey',                   subtitle: '',                                    points: 2,  predator: true },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Garter — no rattlers here',           points: 2,  predator: true },
+      { id: 'marmot',       name: 'Hoary Marmot',             subtitle: '',                                    points: 1  },
+      { id: 'pika',         name: 'Pika',                     subtitle: '',                                    points: 1  },
+      { id: 'deer',         name: 'Deer',                     subtitle: 'Adults free — babies only',           points: 0  },
+      { id: 'elk',          name: 'Elk',                      subtitle: 'Adults free — babies only',           points: 0  }
     ]
   },
   'smokies': {
@@ -502,16 +584,21 @@ const PARKS = {
     region: 'Tennessee / North Carolina',
     defaultGoal: 45,
     animals: [
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Nocturnal — rarely seen',             points: 10 },
-      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Newfound Gap',                        points: 8  },
-      { id: 'otter',        name: 'River Otter',              subtitle: '',                                    points: 6  },
-      { id: 'bear',         name: 'Black Bear',               subtitle: 'Cades Cove',                          points: 5  },
-      { id: 'foxcoyote',    name: 'Fox / Coyote',             subtitle: 'Red & gray fox, coyote',              points: 4  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Nocturnal — rarely seen',             points: 10, predator: true },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Newfound Gap',                        points: 8,  predator: true },
+      { id: 'otter',        name: 'River Otter',              subtitle: '',                                    points: 6,  predator: true },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Cades Cove',                          points: 5,  predator: true },
+      { id: 'fox',          name: 'Fox',                      subtitle: 'Red & gray',                          points: 4,  predator: true },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 4,  predator: true },
       { id: 'grouse',       name: 'Ruffed Grouse',            subtitle: 'Cades Cove',                          points: 4  },
       { id: 'elk',          name: 'Elk',                      subtitle: 'Cataloochee / Oconaluftee',           points: 3  },
-      { id: 'owlraven',     name: 'Owl / Raven',              subtitle: 'Saw-whet owl, common raven',          points: 3  },
+      { id: 'owl',          name: 'Owl',                      subtitle: 'Saw-whet, barred, great horned',      points: 3,  predator: true },
+      { id: 'raven',        name: 'Raven',                    subtitle: '',                                    points: 3  },
       { id: 'deer',         name: 'White-tailed Deer',        subtitle: '',                                    points: 2  },
-      { id: 'raccoon',      name: 'Raccoon / Groundhog',      subtitle: '',                                    points: 1  },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Park has 23 species',                 points: 2,  predator: true },
+      { id: 'raccoon',      name: 'Raccoon',                  subtitle: '',                                    points: 1,  predator: true },
+      { id: 'groundhog',    name: 'Groundhog',                subtitle: '',                                    points: 1  },
       { id: 'turkey',       name: 'Wild Turkey',              subtitle: '',                                    points: 1  }
     ]
   },
@@ -521,20 +608,23 @@ const PARKS = {
     region: 'Florida',
     defaultGoal: 45,
     animals: [
-      { id: 'panther',      name: 'Florida Panther',          subtitle: 'Almost never seen',                   points: 15 },
-      { id: 'snailkite',    name: 'Snail Kite',               subtitle: 'Endangered — Shark Valley',           points: 8  },
-      { id: 'crocodile',    name: 'American Crocodile',       subtitle: 'Flamingo / Florida Bay',              points: 6  },
+      { id: 'panther',      name: 'Florida Panther',          subtitle: 'Almost never seen',                   points: 15, predator: true },
+      { id: 'snailkite',    name: 'Snail Kite',               subtitle: 'Endangered — Shark Valley',           points: 8,  predator: true },
+      { id: 'crocodile',    name: 'American Crocodile',       subtitle: 'Flamingo / Florida Bay',              points: 6,  predator: true },
       { id: 'manatee',      name: 'West Indian Manatee',      subtitle: 'Flamingo',                            points: 5  },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Shy & nocturnal',                     points: 5  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Shy & nocturnal',                     points: 5,  predator: true },
       { id: 'spoonbill',    name: 'Roseate Spoonbill',        subtitle: 'Pink wader',                          points: 4  },
-      { id: 'otter',        name: 'River Otter',              subtitle: 'Nocturnal',                           points: 4  },
+      { id: 'otter',        name: 'River Otter',              subtitle: 'Nocturnal',                           points: 4,  predator: true },
       { id: 'dolphin',      name: 'Bottlenose Dolphin',       subtitle: 'Florida Bay',                         points: 3  },
       { id: 'reddishegret', name: 'Reddish Egret',            subtitle: 'Coastal flats',                       points: 3  },
       { id: 'woodstork',    name: 'Wood Stork',               subtitle: 'Low-water concentrations',            points: 3  },
       { id: 'deer',         name: 'White-tailed Deer',        subtitle: '',                                    points: 2  },
+      { id: 'skunk',        name: 'Skunk',                    subtitle: 'Striped & spotted',                   points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Water snakes, rat snakes',            points: 2,  predator: true },
       { id: 'wading',       name: 'Wading Birds',             subtitle: 'Heron, egret, ibis, anhinga',         points: 1  },
-      { id: 'gator',        name: 'American Alligator',       subtitle: 'Everywhere',                          points: 1  },
-      { id: 'raccoon',      name: 'Raccoon / Marsh Rabbit',   subtitle: '',                                    points: 1  }
+      { id: 'gator',        name: 'American Alligator',       subtitle: 'Everywhere',                          points: 1,  predator: true },
+      { id: 'raccoon',      name: 'Raccoon',                  subtitle: '',                                    points: 1,  predator: true },
+      { id: 'marshrabbit',  name: 'Marsh Rabbit',             subtitle: '',                                    points: 1  }
     ]
   },
   'zion': {
@@ -543,19 +633,24 @@ const PARKS = {
     region: 'Utah',
     defaultGoal: 45,
     animals: [
-      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
-      { id: 'condor',       name: 'California Condor',         subtitle: 'Angels Landing / Kolob',              points: 10 },
-      { id: 'spottedowl',   name: 'Mexican Spotted Owl',      subtitle: 'Threatened — narrow canyons',         points: 8  },
-      { id: 'ringtail',     name: 'Ringtail',                 subtitle: 'Nocturnal',                           points: 6  },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
-      { id: 'fox',          name: 'Gray / Kit Fox',           subtitle: 'Mostly nocturnal',                    points: 4  },
-      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Cliff nester',                        points: 4  },
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15, predator: true },
+      { id: 'condor',       name: 'California Condor',        subtitle: 'Angels Landing / Kolob',              points: 10 },
+      { id: 'spottedowl',   name: 'Mexican Spotted Owl',      subtitle: 'Threatened — narrow canyons',         points: 8,  predator: true },
+      { id: 'ringtail',     name: 'Ringtail',                 subtitle: 'Nocturnal',                           points: 6,  predator: true },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5,  predator: true },
+      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: 'Mostly nocturnal',                    points: 4,  predator: true },
+      { id: 'kitfox',       name: 'Kit Fox',                  subtitle: 'Mostly nocturnal',                    points: 4,  predator: true },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Cliff nester',                        points: 4,  predator: true },
       { id: 'bighorn',      name: 'Desert Bighorn Sheep',     subtitle: 'East of the tunnel',                  points: 3  },
       { id: 'beaver',       name: 'Beaver',                   subtitle: 'Virgin River',                        points: 3  },
-      { id: 'eagle',        name: 'Golden / Bald Eagle',      subtitle: '',                                    points: 3  },
-      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
+      { id: 'goldeneagle',  name: 'Golden Eagle',             subtitle: '',                                    points: 3,  predator: true },
+      { id: 'baldeagle',    name: 'Bald Eagle',               subtitle: '',                                    points: 3,  predator: true },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2,  predator: true },
       { id: 'turkey',       name: 'Wild Turkey',              subtitle: '',                                    points: 2  },
-      { id: 'squirrel',     name: 'Rock Squirrel / Chipmunk', subtitle: '',                                    points: 1  },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Great Basin rattler, others',         points: 2,  predator: true },
+      { id: 'squirrel',     name: 'Rock Squirrel',            subtitle: '',                                    points: 1  },
+      { id: 'chipmunk',     name: 'Chipmunk',                 subtitle: '',                                    points: 1  },
       { id: 'deer',         name: 'Mule Deer',                subtitle: 'Canyon floor — common',               points: 1  }
     ]
   },
@@ -566,17 +661,23 @@ const PARKS = {
     defaultGoal: 40,
     animals: [
       { id: 'moose',        name: 'Moose',                    subtitle: 'Rarely reaches the island',           points: 15 },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Rarely seen',                         points: 10 },
-      { id: 'bear',         name: 'Black Bear',               subtitle: 'Secretive — small population',        points: 8  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Rarely seen',                         points: 10, predator: true },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Secretive — small population',        points: 8,  predator: true },
       { id: 'puffin',       name: 'Atlantic Puffin',          subtitle: 'Offshore islets — by boat',           points: 6  },
       { id: 'whale',        name: 'Whale',                    subtitle: 'Humpback, minke, fin — by tour',      points: 5  },
-      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Precipice / Cadillac cliffs',         points: 4  },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Precipice / Cadillac cliffs',         points: 4,  predator: true },
       { id: 'loon',         name: 'Common Loon',              subtitle: 'Park lakes',                          points: 3  },
-      { id: 'eagle',        name: 'Bald Eagle / Osprey',      subtitle: '',                                    points: 3  },
-      { id: 'otterbeaver',  name: 'Otter / Beaver',           subtitle: '',                                    points: 3  },
+      { id: 'eagle',        name: 'Bald Eagle',               subtitle: '',                                    points: 3,  predator: true },
+      { id: 'osprey',       name: 'Osprey',                   subtitle: '',                                    points: 3,  predator: true },
+      { id: 'otter',        name: 'River Otter',              subtitle: '',                                    points: 3,  predator: true },
+      { id: 'beaver',       name: 'Beaver',                   subtitle: '',                                    points: 3  },
       { id: 'seal',         name: 'Seal',                     subtitle: 'Harbor & gray — rock ledges',         points: 2  },
-      { id: 'porpoise',     name: 'Porpoise / Dolphin',       subtitle: 'Harbor porpoise, white-sided',        points: 2  },
-      { id: 'fox',          name: 'Red Fox / Coyote',         subtitle: '',                                    points: 1  },
+      { id: 'porpoise',     name: 'Harbor Porpoise',          subtitle: '',                                    points: 2  },
+      { id: 'dolphin',      name: 'Dolphin',                  subtitle: 'White-sided',                         points: 2  },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Garter, milk snake',                  points: 2,  predator: true },
+      { id: 'fox',          name: 'Red Fox',                  subtitle: '',                                    points: 1,  predator: true },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 1,  predator: true },
       { id: 'seabirds',     name: 'Seabirds',                 subtitle: 'Eider, guillemot, gull, tern',        points: 1  },
       { id: 'deer',         name: 'White-tailed Deer',        subtitle: 'Adults free — babies only',           points: 0  }
     ]
@@ -587,19 +688,21 @@ const PARKS = {
     region: 'Washington',
     defaultGoal: 45,
     animals: [
-      { id: 'cougar',       name: 'Cougar',                   subtitle: 'Apex predator — rarely seen',         points: 15 },
-      { id: 'spottedowl',   name: 'Northern Spotted Owl',     subtitle: 'Endangered — old growth',             points: 10 },
+      { id: 'cougar',       name: 'Cougar',                   subtitle: 'Apex predator — rarely seen',         points: 15, predator: true },
+      { id: 'spottedowl',   name: 'Northern Spotted Owl',     subtitle: 'Endangered — old growth',             points: 10, predator: true },
       { id: 'murrelet',     name: 'Marbled Murrelet',         subtitle: 'Rarest bird — nests in old growth',   points: 8  },
       { id: 'seaotter',     name: 'Sea Otter',                subtitle: 'Offshore coast',                      points: 6  },
       { id: 'marmot',       name: 'Olympic Marmot',           subtitle: 'Endemic — Hurricane Ridge',           points: 5  },
       { id: 'mtngoat',      name: 'Mountain Goat',            subtitle: 'Introduced — being removed',          points: 5  },
-      { id: 'bear',         name: 'Black Bear',               subtitle: 'Secretive — backcountry',             points: 4  },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 4  },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Secretive — backcountry',             points: 4,  predator: true },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 4,  predator: true },
       { id: 'harlequin',    name: 'Harlequin Duck',           subtitle: 'Wild rivers / Ediz Hook',             points: 3  },
       { id: 'graywhale',    name: 'Gray Whale',               subtitle: 'Migratory — coast',                   points: 3  },
-      { id: 'otter',        name: 'River Otter',              subtitle: '',                                    points: 3  },
-      { id: 'eagle',        name: 'Bald Eagle',               subtitle: 'Coast & rivers',                      points: 2  },
+      { id: 'otter',        name: 'River Otter',              subtitle: '',                                    points: 3,  predator: true },
+      { id: 'eagle',        name: 'Bald Eagle',               subtitle: 'Coast & rivers',                      points: 2,  predator: true },
       { id: 'seal',         name: 'Harbor Seal',              subtitle: 'Coast',                               points: 2  },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Garter — no rattlers here',           points: 2,  predator: true },
       { id: 'deer',         name: 'Black-tailed Deer',        subtitle: '',                                    points: 1  },
       { id: 'elk',          name: 'Roosevelt Elk',            subtitle: 'Adults free — babies only',           points: 0  }
     ]
@@ -610,19 +713,23 @@ const PARKS = {
     region: 'Utah',
     defaultGoal: 45,
     animals: [
-      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
-      { id: 'ringtail',     name: 'Ringtail',                 subtitle: 'Nocturnal',                           points: 8  },
-      { id: 'kitfox',       name: 'Kit Fox',                  subtitle: 'Smallest canid — nocturnal',          points: 6  },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15, predator: true },
+      { id: 'ringtail',     name: 'Ringtail',                 subtitle: 'Nocturnal',                           points: 8,  predator: true },
+      { id: 'kitfox',       name: 'Kit Fox',                  subtitle: 'Smallest canid — nocturnal',          points: 6,  predator: true },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5,  predator: true },
       { id: 'bighorn',      name: 'Desert Bighorn Sheep',     subtitle: 'Canyonlands herds',                   points: 4  },
-      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Canyon cliffs',                       points: 4  },
-      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: 'Mostly nocturnal',                    points: 4  },
-      { id: 'eagle',        name: 'Golden Eagle',             subtitle: '',                                    points: 3  },
-      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
-      { id: 'owls',         name: 'Owls',                     subtitle: 'Great horned, others',                points: 2  },
-      { id: 'squirrel',     name: 'Rock Squirrel / Chipmunk', subtitle: '',                                    points: 1  },
-      { id: 'raven',        name: 'Raven / Pinyon Jay',       subtitle: '',                                    points: 1  },
-      { id: 'deer',         name: 'Mule Deer',                subtitle: 'Less common in the slickrock',        points: 2  }
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Canyon cliffs',                       points: 4,  predator: true },
+      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: 'Mostly nocturnal',                    points: 4,  predator: true },
+      { id: 'eagle',        name: 'Golden Eagle',             subtitle: '',                                    points: 3,  predator: true },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2,  predator: true },
+      { id: 'owls',         name: 'Owls',                     subtitle: 'Great horned, others',                points: 2,  predator: true },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Midget faded rattler, others',        points: 2,  predator: true },
+      { id: 'deer',         name: 'Mule Deer',                subtitle: 'Less common in the slickrock',        points: 2  },
+      { id: 'squirrel',     name: 'Rock Squirrel',            subtitle: '',                                    points: 1  },
+      { id: 'chipmunk',     name: 'Chipmunk',                 subtitle: '',                                    points: 1  },
+      { id: 'raven',        name: 'Raven',                    subtitle: '',                                    points: 1  },
+      { id: 'pinyonjay',    name: 'Pinyon Jay',               subtitle: '',                                    points: 1  }
     ]
   },
   'capitol-reef': {
@@ -631,19 +738,25 @@ const PARKS = {
     region: 'Utah',
     defaultGoal: 45,
     animals: [
-      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
-      { id: 'ringtail',     name: 'Ringtail',                 subtitle: 'Nocturnal',                           points: 8  },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
-      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Endangered — cliffs',                 points: 5  },
-      { id: 'fox',          name: 'Gray / Kit Fox',           subtitle: 'Nocturnal',                           points: 4  },
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15, predator: true },
+      { id: 'ringtail',     name: 'Ringtail',                 subtitle: 'Nocturnal',                           points: 8,  predator: true },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5,  predator: true },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Endangered — cliffs',                 points: 5,  predator: true },
+      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: 'Nocturnal',                           points: 4,  predator: true },
+      { id: 'kitfox',       name: 'Kit Fox',                  subtitle: 'Nocturnal',                           points: 4,  predator: true },
       { id: 'pronghorn',    name: 'Pronghorn',                subtitle: 'Open country',                        points: 4  },
       { id: 'elk',          name: 'Elk',                      subtitle: 'Less common here',                    points: 3  },
-      { id: 'eagle',        name: 'Golden Eagle',             subtitle: '',                                    points: 3  },
+      { id: 'eagle',        name: 'Golden Eagle',             subtitle: '',                                    points: 3,  predator: true },
       { id: 'bighorn',      name: 'Desert Bighorn Sheep',     subtitle: 'Grand Wash / Capitol Gorge',          points: 3  },
       { id: 'marmot',       name: 'Yellow-bellied Marmot',    subtitle: 'Fruita',                              points: 2  },
-      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
-      { id: 'squirrel',     name: 'Rock Squirrel / Chipmunk', subtitle: '',                                    points: 1  },
-      { id: 'raven',        name: 'Raven / Jay / Chukar',     subtitle: '',                                    points: 1  },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2,  predator: true },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Gopher snake, midget rattler',        points: 2,  predator: true },
+      { id: 'squirrel',     name: 'Rock Squirrel',            subtitle: '',                                    points: 1  },
+      { id: 'chipmunk',     name: 'Chipmunk',                 subtitle: '',                                    points: 1  },
+      { id: 'raven',        name: 'Raven',                    subtitle: '',                                    points: 1  },
+      { id: 'jay',          name: 'Jay',                      subtitle: '',                                    points: 1  },
+      { id: 'chukar',       name: 'Chukar',                   subtitle: '',                                    points: 1  },
       { id: 'deer',         name: 'Mule Deer',                subtitle: 'Fruita orchards',                     points: 1  }
     ]
   },
@@ -653,18 +766,23 @@ const PARKS = {
     region: 'Utah',
     defaultGoal: 40,
     animals: [
-      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
-      { id: 'condor',       name: 'California Condor',         subtitle: 'Endangered — largest land bird',      points: 10 },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Nocturnal',                           points: 6  },
-      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: 'Nocturnal',                           points: 4  },
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15, predator: true },
+      { id: 'condor',       name: 'California Condor',        subtitle: 'Endangered — largest land bird',      points: 10 },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Nocturnal',                           points: 6,  predator: true },
+      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: 'Nocturnal',                           points: 4,  predator: true },
       { id: 'prairiedog',   name: 'Utah Prairie Dog',         subtitle: 'Endangered — meadows',                points: 4  },
       { id: 'pronghorn',    name: 'Pronghorn',                subtitle: 'Meadows',                             points: 3  },
-      { id: 'eagle',        name: 'Golden Eagle',             subtitle: '',                                    points: 3  },
-      { id: 'owls',         name: 'Owls',                     subtitle: 'Great horned, others',                points: 2  },
-      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
+      { id: 'eagle',        name: 'Golden Eagle',             subtitle: '',                                    points: 3,  predator: true },
+      { id: 'owls',         name: 'Owls',                     subtitle: 'Great horned, others',                points: 2,  predator: true },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2,  predator: true },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Great Basin rattler, others',         points: 2,  predator: true },
       { id: 'porcupine',    name: 'Porcupine',                subtitle: '',                                    points: 1  },
-      { id: 'raven',        name: 'Raven / Nutcracker / Jay', subtitle: '',                                    points: 1  },
-      { id: 'marmot',       name: 'Marmot / Chipmunk',        subtitle: '',                                    points: 1  },
+      { id: 'raven',        name: 'Raven',                    subtitle: '',                                    points: 1  },
+      { id: 'nutcracker',   name: "Clark's Nutcracker",       subtitle: '',                                    points: 1  },
+      { id: 'jay',          name: 'Jay',                      subtitle: '',                                    points: 1  },
+      { id: 'marmot',       name: 'Marmot',                   subtitle: '',                                    points: 1  },
+      { id: 'chipmunk',     name: 'Chipmunk',                 subtitle: '',                                    points: 1  },
       { id: 'deer',         name: 'Mule Deer',                subtitle: 'Meadows',                             points: 1  }
     ]
   },
@@ -674,21 +792,28 @@ const PARKS = {
     region: 'Arizona',
     defaultGoal: 45,
     animals: [
-      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
-      { id: 'condor',       name: 'California Condor',         subtitle: 'Navajo Bridge / South Rim',           points: 10 },
-      { id: 'spottedowl',   name: 'Mexican Spotted Owl',      subtitle: 'Threatened — inner canyon',           points: 8  },
-      { id: 'ringtail',     name: 'Ringtail',                 subtitle: 'Nocturnal — AZ state mammal',         points: 6  },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15, predator: true },
+      { id: 'condor',       name: 'California Condor',        subtitle: 'Navajo Bridge / South Rim',           points: 10 },
+      { id: 'spottedowl',   name: 'Mexican Spotted Owl',      subtitle: 'Threatened — inner canyon',           points: 8,  predator: true },
+      { id: 'ringtail',     name: 'Ringtail',                 subtitle: 'Nocturnal — AZ state mammal',         points: 6,  predator: true },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5,  predator: true },
       { id: 'kaibab',       name: 'Kaibab Squirrel',          subtitle: 'North Rim only',                      points: 5  },
-      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Canyon cliffs',                       points: 4  },
-      { id: 'fox',          name: 'Gray / Kit Fox',           subtitle: 'Nocturnal',                           points: 4  },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Canyon cliffs',                       points: 4,  predator: true },
+      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: 'Nocturnal',                           points: 4,  predator: true },
+      { id: 'kitfox',       name: 'Kit Fox',                  subtitle: 'Nocturnal',                           points: 4,  predator: true },
       { id: 'bighorn',      name: 'Desert Bighorn Sheep',     subtitle: 'Rocky ledges',                        points: 3  },
-      { id: 'eagle',        name: 'Golden / Bald Eagle',      subtitle: '',                                    points: 3  },
-      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
-      { id: 'owls',         name: 'Owls',                     subtitle: 'Great horned, elf, pygmy',            points: 2  },
-      { id: 'squirrel',     name: 'Rock Squirrel / Chipmunk', subtitle: '',                                    points: 1  },
-      { id: 'raven',        name: 'Raven / Pinyon Jay',       subtitle: '',                                    points: 1  },
-      { id: 'deerelk',      name: 'Mule Deer / Elk',          subtitle: 'Common on both rims',                 points: 1  }
+      { id: 'goldeneagle',  name: 'Golden Eagle',             subtitle: '',                                    points: 3,  predator: true },
+      { id: 'baldeagle',    name: 'Bald Eagle',               subtitle: '',                                    points: 3,  predator: true },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2,  predator: true },
+      { id: 'owls',         name: 'Owls',                     subtitle: 'Great horned, elf, pygmy',            points: 2,  predator: true },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Grand Canyon pink rattler',           points: 2,  predator: true },
+      { id: 'squirrel',     name: 'Rock Squirrel',            subtitle: '',                                    points: 1  },
+      { id: 'chipmunk',     name: 'Chipmunk',                 subtitle: '',                                    points: 1  },
+      { id: 'raven',        name: 'Raven',                    subtitle: '',                                    points: 1  },
+      { id: 'pinyonjay',    name: 'Pinyon Jay',               subtitle: '',                                    points: 1  },
+      { id: 'deer',         name: 'Mule Deer',                subtitle: 'Common on both rims',                 points: 1  },
+      { id: 'elk',          name: 'Elk',                      subtitle: 'Common on both rims',                 points: 1  }
     ]
   },
   'rocky-mountain': {
@@ -697,19 +822,27 @@ const PARKS = {
     region: 'Colorado',
     defaultGoal: 45,
     animals: [
-      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Very rarely seen',                    points: 15 },
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Very rarely seen',                    points: 15, predator: true },
       { id: 'ptarmigan',    name: 'White-tailed Ptarmigan',   subtitle: 'Alpine tundra',                       points: 8  },
-      { id: 'bear',         name: 'Black Bear',               subtitle: 'Uncommon',                            points: 6  },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
-      { id: 'foxcoyote',    name: 'Fox / Coyote',             subtitle: '',                                    points: 4  },
-      { id: 'raptor',       name: 'Golden Eagle / Prairie Falcon', subtitle: 'Cliffs',                         points: 4  },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Uncommon',                            points: 6,  predator: true },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5,  predator: true },
+      { id: 'fox',          name: 'Red Fox',                  subtitle: '',                                    points: 4,  predator: true },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 4,  predator: true },
+      { id: 'goldeneagle',  name: 'Golden Eagle',             subtitle: 'Cliffs',                              points: 4,  predator: true },
+      { id: 'prairiefalcon', name: 'Prairie Falcon',          subtitle: 'Cliffs',                              points: 4,  predator: true },
       { id: 'moose',        name: 'Moose',                    subtitle: 'Kawuneeche Valley',                   points: 3  },
       { id: 'beaver',       name: 'Beaver',                   subtitle: '',                                    points: 3  },
-      { id: 'marmotpika',   name: 'Marmot / Pika',            subtitle: 'Alpine rocks',                        points: 3  },
+      { id: 'marmot',       name: 'Marmot',                   subtitle: 'Alpine rocks',                        points: 3  },
+      { id: 'pika',         name: 'Pika',                     subtitle: 'Alpine rocks',                        points: 3  },
       { id: 'bighorn',      name: 'Bighorn Sheep',            subtitle: 'Sheep Lakes',                         points: 2  },
       { id: 'hare',         name: 'Snowshoe Hare',            subtitle: '',                                    points: 2  },
-      { id: 'squirrel',     name: 'Squirrel / Chipmunk / Nutcracker', subtitle: '',                            points: 1  },
-      { id: 'deerelk',      name: 'Elk / Mule Deer',          subtitle: 'Adults free — babies only',           points: 0  }
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Garter — scarce up high',             points: 2,  predator: true },
+      { id: 'squirrel',     name: 'Squirrel',                 subtitle: '',                                    points: 1  },
+      { id: 'chipmunk',     name: 'Chipmunk',                 subtitle: '',                                    points: 1  },
+      { id: 'nutcracker',   name: "Clark's Nutcracker",       subtitle: '',                                    points: 1  },
+      { id: 'elk',          name: 'Elk',                      subtitle: 'Adults free — babies only',           points: 0  },
+      { id: 'deer',         name: 'Mule Deer',                subtitle: 'Adults free — babies only',           points: 0  }
     ]
   },
   'sequoia-kings': {
@@ -718,17 +851,24 @@ const PARKS = {
     region: 'California',
     defaultGoal: 45,
     animals: [
-      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15, predator: true },
       { id: 'bighorn',      name: 'Sierra Bighorn Sheep',     subtitle: 'Endangered — high alpine',            points: 10 },
-      { id: 'fisher',       name: 'Pacific Fisher',           subtitle: 'Rare forest carnivore',               points: 8  },
-      { id: 'graygowl',     name: 'Great Gray Owl',           subtitle: 'Meadows',                             points: 6  },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
-      { id: 'foxcoyote',    name: 'Gray Fox / Coyote',        subtitle: '',                                    points: 4  },
-      { id: 'raptor',       name: 'Golden Eagle / Peregrine', subtitle: 'Cliffs',                              points: 4  },
-      { id: 'bear',         name: 'Black Bear',               subtitle: 'Forested areas',                      points: 3  },
-      { id: 'marmotpika',   name: 'Marmot / Pika',            subtitle: 'Alpine rocks',                        points: 3  },
-      { id: 'jay',          name: "Steller's Jay / Nutcracker", subtitle: '',                                  points: 2  },
-      { id: 'squirrel',     name: 'Squirrel / Chipmunk',      subtitle: '',                                    points: 1  },
+      { id: 'fisher',       name: 'Pacific Fisher',           subtitle: 'Rare forest carnivore',               points: 8,  predator: true },
+      { id: 'graygowl',     name: 'Great Gray Owl',           subtitle: 'Meadows',                             points: 6,  predator: true },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5,  predator: true },
+      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: '',                                    points: 4,  predator: true },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 4,  predator: true },
+      { id: 'goldeneagle',  name: 'Golden Eagle',             subtitle: 'Cliffs',                              points: 4,  predator: true },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Cliffs',                              points: 4,  predator: true },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Forested areas',                      points: 3,  predator: true },
+      { id: 'marmot',       name: 'Marmot',                   subtitle: 'Alpine rocks',                        points: 3  },
+      { id: 'pika',         name: 'Pika',                     subtitle: 'Alpine rocks',                        points: 3  },
+      { id: 'jay',          name: "Steller's Jay",            subtitle: '',                                    points: 2  },
+      { id: 'nutcracker',   name: "Clark's Nutcracker",       subtitle: '',                                    points: 2  },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Rattler in the foothills',            points: 2,  predator: true },
+      { id: 'squirrel',     name: 'Squirrel',                 subtitle: '',                                    points: 1  },
+      { id: 'chipmunk',     name: 'Chipmunk',                 subtitle: '',                                    points: 1  },
       { id: 'deer',         name: 'Mule Deer',                subtitle: 'Adults free — babies only',           points: 0  }
     ]
   },
@@ -738,17 +878,23 @@ const PARKS = {
     region: 'California',
     defaultGoal: 45,
     animals: [
-      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15, predator: true },
       { id: 'bighorn',      name: 'Sierra Bighorn Sheep',     subtitle: 'Endangered — Tioga Pass',             points: 10 },
-      { id: 'graygowl',     name: 'Great Gray Owl',           subtitle: 'Unique to Yosemite — meadows',        points: 8  },
-      { id: 'fisher',       name: 'Pacific Fisher',           subtitle: 'Rare forest carnivore',               points: 6  },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
-      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'El Capitan cliffs',                   points: 4  },
-      { id: 'foxcoyote',    name: 'Gray Fox / Coyote',        subtitle: '',                                    points: 4  },
-      { id: 'bear',         name: 'Black Bear',               subtitle: 'Forests & valley',                    points: 3  },
-      { id: 'marmotpika',   name: 'Marmot / Pika',            subtitle: 'Alpine rocks',                        points: 3  },
-      { id: 'jay',          name: "Steller's Jay / Nutcracker", subtitle: '',                                  points: 2  },
-      { id: 'squirrel',     name: 'Squirrel / Chipmunk',      subtitle: '',                                    points: 1  },
+      { id: 'graygowl',     name: 'Great Gray Owl',           subtitle: 'Unique to Yosemite — meadows',        points: 8,  predator: true },
+      { id: 'fisher',       name: 'Pacific Fisher',           subtitle: 'Rare forest carnivore',               points: 6,  predator: true },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5,  predator: true },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'El Capitan cliffs',                   points: 4,  predator: true },
+      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: '',                                    points: 4,  predator: true },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 4,  predator: true },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Forests & valley',                    points: 3,  predator: true },
+      { id: 'marmot',       name: 'Marmot',                   subtitle: 'Alpine rocks',                        points: 3  },
+      { id: 'pika',         name: 'Pika',                     subtitle: 'Alpine rocks',                        points: 3  },
+      { id: 'jay',          name: "Steller's Jay",            subtitle: '',                                    points: 2  },
+      { id: 'nutcracker',   name: "Clark's Nutcracker",       subtitle: '',                                    points: 2  },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Rattler in the foothills',            points: 2,  predator: true },
+      { id: 'squirrel',     name: 'Squirrel',                 subtitle: '',                                    points: 1  },
+      { id: 'chipmunk',     name: 'Chipmunk',                 subtitle: '',                                    points: 1  },
       { id: 'deer',         name: 'Mule Deer',                subtitle: 'Adults free — babies only',           points: 0  }
     ]
   },
@@ -758,17 +904,21 @@ const PARKS = {
     region: 'California',
     defaultGoal: 40,
     animals: [
-      { id: 'orca',         name: 'Orca',                     subtitle: 'Rare visitor',                        points: 15 },
-      { id: 'skunk',        name: 'Island Spotted Skunk',     subtitle: 'Endemic — nocturnal',                 points: 10 },
+      { id: 'orca',         name: 'Orca',                     subtitle: 'Rare visitor',                        points: 15, predator: true },
+      { id: 'skunk',        name: 'Island Spotted Skunk',     subtitle: 'Endemic — nocturnal',                 points: 10, predator: true },
       { id: 'bluewhale',    name: 'Blue Whale',               subtitle: 'Summer — largest animal on earth',    points: 8  },
       { id: 'scrubjay',     name: 'Island Scrub-Jay',         subtitle: 'Endemic — Santa Cruz only',           points: 6  },
-      { id: 'eagle',        name: 'Bald Eagle',               subtitle: 'Reintroduced',                        points: 5  },
-      { id: 'whale',        name: 'Humpback / Gray Whale',    subtitle: 'Migratory',                           points: 4  },
-      { id: 'furseal',      name: 'Fur / Elephant Seal',      subtitle: 'Point Bennett',                       points: 4  },
-      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Sea cliffs',                          points: 3  },
+      { id: 'eagle',        name: 'Bald Eagle',               subtitle: 'Reintroduced',                        points: 5,  predator: true },
+      { id: 'humpback',     name: 'Humpback Whale',           subtitle: 'Migratory',                           points: 4  },
+      { id: 'graywhale',    name: 'Gray Whale',               subtitle: 'Migratory',                           points: 4  },
+      { id: 'furseal',      name: 'Fur Seal',                 subtitle: 'Point Bennett',                       points: 4  },
+      { id: 'elephantseal', name: 'Elephant Seal',            subtitle: 'Point Bennett',                       points: 4  },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Sea cliffs',                          points: 3,  predator: true },
       { id: 'dolphin',      name: 'Common Dolphin',           subtitle: 'Large pods',                          points: 2  },
-      { id: 'seal',         name: 'Harbor Seal / Sea Lion',   subtitle: 'Common',                              points: 2  },
-      { id: 'fox',          name: 'Island Fox',               subtitle: 'Endemic — bold & easy to see',        points: 2  }
+      { id: 'seal',         name: 'Harbor Seal',              subtitle: 'Common',                              points: 2  },
+      { id: 'sealion',      name: 'Sea Lion',                 subtitle: 'Common',                              points: 2  },
+      { id: 'fox',          name: 'Island Fox',               subtitle: 'Endemic — bold & easy to see',        points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Gopher snake — Santa Cruz',           points: 2,  predator: true }
     ]
   },
   'pinnacles': {
@@ -777,17 +927,22 @@ const PARKS = {
     region: 'California',
     defaultGoal: 40,
     animals: [
-      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
-      { id: 'condor',       name: 'California Condor',         subtitle: 'Release site — free-flying',          points: 10 },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Secretive',                           points: 6  },
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15, predator: true },
+      { id: 'condor',       name: 'California Condor',        subtitle: 'Release site — free-flying',          points: 10 },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Secretive',                           points: 6,  predator: true },
       { id: 'bats',         name: 'Bats',                     subtitle: 'Talus caves — 13 species',            points: 5  },
-      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: 'Nocturnal',                           points: 4  },
-      { id: 'prairiefalcon', name: 'Prairie Falcon',          subtitle: 'High breeding density',               points: 4  },
-      { id: 'raptor',       name: 'Golden Eagle / Peregrine', subtitle: 'Cliffs',                              points: 3  },
-      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
-      { id: 'owls',         name: 'Owls',                     subtitle: 'Great horned, others',                points: 2  },
-      { id: 'squirrel',     name: 'Squirrel / Chipmunk',      subtitle: '',                                    points: 1  },
-      { id: 'raven',        name: 'Raven / Jay',              subtitle: '',                                    points: 1  },
+      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: 'Nocturnal',                           points: 4,  predator: true },
+      { id: 'prairiefalcon', name: 'Prairie Falcon',          subtitle: 'High breeding density',               points: 4,  predator: true },
+      { id: 'goldeneagle',  name: 'Golden Eagle',             subtitle: 'Cliffs',                              points: 3,  predator: true },
+      { id: 'peregrine',    name: 'Peregrine Falcon',         subtitle: 'Cliffs',                              points: 3,  predator: true },
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2,  predator: true },
+      { id: 'owls',         name: 'Owls',                     subtitle: 'Great horned, others',                points: 2,  predator: true },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Gopher snake, rattler',               points: 2,  predator: true },
+      { id: 'squirrel',     name: 'Squirrel',                 subtitle: '',                                    points: 1  },
+      { id: 'chipmunk',     name: 'Chipmunk',                 subtitle: '',                                    points: 1  },
+      { id: 'raven',        name: 'Raven',                    subtitle: '',                                    points: 1  },
+      { id: 'jay',          name: 'Jay',                      subtitle: '',                                    points: 1  },
       { id: 'deer',         name: 'Mule Deer',                subtitle: 'Adults free — babies only',           points: 0  }
     ]
   },
@@ -797,19 +952,23 @@ const PARKS = {
     region: 'California',
     defaultGoal: 40,
     animals: [
-      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15, predator: true },
       { id: 'bighorn',      name: 'Desert Bighorn Sheep',     subtitle: 'Barker Dam — at dawn/dusk',           points: 8  },
       { id: 'tortoise',     name: 'Desert Tortoise',          subtitle: 'Threatened — spring/fall after rain', points: 6  },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Uncommon',                            points: 5  },
-      { id: 'kitfox',       name: 'Kit Fox',                  subtitle: 'Nocturnal',                           points: 4  },
-      { id: 'eagle',        name: 'Golden Eagle',             subtitle: 'Cliffs',                              points: 4  },
-      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: '',                                    points: 3  },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Uncommon',                            points: 5,  predator: true },
+      { id: 'kitfox',       name: 'Kit Fox',                  subtitle: 'Nocturnal',                           points: 4,  predator: true },
+      { id: 'eagle',        name: 'Golden Eagle',             subtitle: 'Cliffs',                              points: 4,  predator: true },
+      { id: 'grayfox',      name: 'Gray Fox',                 subtitle: '',                                    points: 3,  predator: true },
       { id: 'roadrunner',   name: 'Roadrunner',               subtitle: 'Desert icon',                         points: 3  },
       { id: 'quail',        name: "Gambel's Quail",           subtitle: '',                                    points: 2  },
-      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
-      { id: 'jackrabbit',   name: 'Jackrabbit / Kangaroo Rat', subtitle: '',                                   points: 1  },
-      { id: 'squirrel',     name: 'Squirrel / Chipmunk',      subtitle: '',                                    points: 1  },
-      { id: 'deer',         name: 'Mule Deer',                subtitle: 'Higher elevations — uncommon',        points: 2  }
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2,  predator: true },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Sidewinder, Mojave rattler',          points: 2,  predator: true },
+      { id: 'deer',         name: 'Mule Deer',                subtitle: 'Higher elevations — uncommon',        points: 2  },
+      { id: 'jackrabbit',   name: 'Jackrabbit',               subtitle: '',                                    points: 1  },
+      { id: 'krat',         name: 'Kangaroo Rat',             subtitle: '',                                    points: 1  },
+      { id: 'squirrel',     name: 'Squirrel',                 subtitle: '',                                    points: 1  },
+      { id: 'chipmunk',     name: 'Chipmunk',                 subtitle: '',                                    points: 1  }
     ]
   },
   'death-valley': {
@@ -818,18 +977,23 @@ const PARKS = {
     region: 'California / Nevada',
     defaultGoal: 40,
     animals: [
-      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15 },
+      { id: 'lion',         name: 'Mountain Lion',            subtitle: 'Almost never seen',                   points: 15, predator: true },
       { id: 'bighorn',      name: 'Desert Bighorn Sheep',     subtitle: 'Klare Spring / Titus Canyon',         points: 8  },
-      { id: 'kitfox',       name: 'Kit Fox',                  subtitle: 'Nocturnal',                           points: 6  },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
+      { id: 'kitfox',       name: 'Kit Fox',                  subtitle: 'Nocturnal',                           points: 6,  predator: true },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5,  predator: true },
       { id: 'pupfish',      name: 'Pupfish',                  subtitle: 'Endemic — Salt Creek (spring)',       points: 5  },
-      { id: 'eagle',        name: 'Golden Eagle',             subtitle: 'Cliffs',                              points: 4  },
+      { id: 'eagle',        name: 'Golden Eagle',             subtitle: 'Cliffs',                              points: 4,  predator: true },
       { id: 'burro',        name: 'Wild Burro',               subtitle: 'Feral',                               points: 3  },
       { id: 'roadrunner',   name: 'Roadrunner',               subtitle: 'Desert icon',                         points: 3  },
-      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2  },
-      { id: 'jackrabbit',   name: 'Jackrabbit / Kangaroo Rat', subtitle: '',                                   points: 2  },
-      { id: 'raven',        name: "Raven / Gambel's Quail",   subtitle: '',                                    points: 1  },
-      { id: 'squirrel',     name: 'Squirrel / Chipmunk',      subtitle: '',                                    points: 1  }
+      { id: 'coyote',       name: 'Coyote',                   subtitle: '',                                    points: 2,  predator: true },
+      { id: 'jackrabbit',   name: 'Jackrabbit',               subtitle: '',                                    points: 2  },
+      { id: 'krat',         name: 'Kangaroo Rat',             subtitle: '',                                    points: 2  },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Sidewinder',                          points: 2,  predator: true },
+      { id: 'raven',        name: 'Raven',                    subtitle: '',                                    points: 1  },
+      { id: 'quail',        name: "Gambel's Quail",           subtitle: '',                                    points: 1  },
+      { id: 'squirrel',     name: 'Squirrel',                 subtitle: '',                                    points: 1  },
+      { id: 'chipmunk',     name: 'Chipmunk',                 subtitle: '',                                    points: 1  }
     ]
   },
   'mount-rainier': {
@@ -838,18 +1002,24 @@ const PARKS = {
     region: 'Washington',
     defaultGoal: 45,
     animals: [
-      { id: 'cougar',       name: 'Cougar',                   subtitle: 'Almost never seen',                   points: 15 },
-      { id: 'spottedowl',   name: 'Northern Spotted Owl',     subtitle: 'Endangered — old growth',             points: 10 },
-      { id: 'redfox',       name: 'Cascade Red Fox',          subtitle: 'High country — uncommon',             points: 6  },
-      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5  },
+      { id: 'cougar',       name: 'Cougar',                   subtitle: 'Almost never seen',                   points: 15, predator: true },
+      { id: 'spottedowl',   name: 'Northern Spotted Owl',     subtitle: 'Endangered — old growth',             points: 10, predator: true },
+      { id: 'redfox',       name: 'Cascade Red Fox',          subtitle: 'High country — uncommon',             points: 6,  predator: true },
+      { id: 'bobcat',       name: 'Bobcat',                   subtitle: 'Elusive',                             points: 5,  predator: true },
       { id: 'mtngoat',      name: 'Mountain Goat',            subtitle: 'High cliffs',                         points: 5  },
-      { id: 'marten',       name: 'Pine Marten',              subtitle: '',                                    points: 4  },
+      { id: 'marten',       name: 'Pine Marten',              subtitle: '',                                    points: 4,  predator: true },
       { id: 'ptarmigan',    name: 'White-tailed Ptarmigan',   subtitle: 'Alpine',                              points: 4  },
-      { id: 'bear',         name: 'Black Bear',               subtitle: 'Meadows & forest',                    points: 3  },
-      { id: 'marmotpika',   name: 'Hoary Marmot / Pika',      subtitle: 'Paradise meadows',                    points: 3  },
-      { id: 'jay',          name: 'Gray Jay / Nutcracker',    subtitle: '',                                    points: 2  },
-      { id: 'squirrel',     name: 'Douglas Squirrel / Chipmunk', subtitle: '',                                 points: 1  },
-      { id: 'deerelk',      name: 'Elk / Black-tailed Deer',  subtitle: 'Adults free — babies only',           points: 0  }
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Meadows & forest',                    points: 3,  predator: true },
+      { id: 'marmot',       name: 'Hoary Marmot',             subtitle: 'Paradise meadows',                    points: 3  },
+      { id: 'pika',         name: 'Pika',                     subtitle: 'Paradise meadows',                    points: 3  },
+      { id: 'grayjay',      name: 'Gray Jay',                 subtitle: '',                                    points: 2  },
+      { id: 'nutcracker',   name: "Clark's Nutcracker",       subtitle: '',                                    points: 2  },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Garter — no rattlers here',           points: 2,  predator: true },
+      { id: 'squirrel',     name: 'Douglas Squirrel',         subtitle: '',                                    points: 1  },
+      { id: 'chipmunk',     name: 'Chipmunk',                 subtitle: '',                                    points: 1  },
+      { id: 'elk',          name: 'Elk',                      subtitle: 'Adults free — babies only',           points: 0  },
+      { id: 'deer',         name: 'Black-tailed Deer',        subtitle: 'Adults free — babies only',           points: 0  }
     ]
   },
   'north-cascades': {
@@ -858,20 +1028,25 @@ const PARKS = {
     region: 'Washington',
     defaultGoal: 45,
     animals: [
-      { id: 'grizzly',      name: 'Grizzly Bear',             subtitle: 'Functionally gone — a unicorn',       points: 15 },
-      { id: 'wolverine',    name: 'Wolverine',                subtitle: 'High country — ~3 dozen statewide',   points: 12 },
-      { id: 'lynx',         name: 'Canada Lynx',              subtitle: 'Threatened — elusive',                points: 10 },
-      { id: 'wolf',         name: 'Gray Wolf',                subtitle: 'Rebounding — rare',                   points: 8  },
-      { id: 'cougar',       name: 'Cougar',                   subtitle: 'Elusive',                             points: 6  },
-      { id: 'fisher',       name: 'Pacific Fisher',           subtitle: 'Reintroduced',                        points: 5  },
+      { id: 'grizzly',      name: 'Grizzly Bear',             subtitle: 'Functionally gone — a unicorn',       points: 15, predator: true },
+      { id: 'wolverine',    name: 'Wolverine',                subtitle: 'High country — ~3 dozen statewide',   points: 12, predator: true },
+      { id: 'lynx',         name: 'Canada Lynx',              subtitle: 'Threatened — elusive',                points: 10, predator: true },
+      { id: 'wolf',         name: 'Gray Wolf',                subtitle: 'Rebounding — rare',                   points: 8,  predator: true },
+      { id: 'cougar',       name: 'Cougar',                   subtitle: 'Elusive',                             points: 6,  predator: true },
+      { id: 'fisher',       name: 'Pacific Fisher',           subtitle: 'Reintroduced',                        points: 5,  predator: true },
       { id: 'mtngoat',      name: 'Mountain Goat',            subtitle: 'High cliffs',                         points: 5  },
-      { id: 'marten',       name: 'Pine Marten',              subtitle: '',                                    points: 4  },
+      { id: 'marten',       name: 'Pine Marten',              subtitle: '',                                    points: 4,  predator: true },
       { id: 'moose',        name: 'Moose',                    subtitle: 'Eastern valleys — rare',              points: 4  },
-      { id: 'bear',         name: 'Black Bear',               subtitle: 'Common',                              points: 3  },
-      { id: 'marmotpika',   name: 'Hoary Marmot / Pika',      subtitle: 'Alpine',                              points: 3  },
-      { id: 'eagle',        name: 'Bald Eagle',               subtitle: 'Skagit — winter',                     points: 2  },
-      { id: 'jay',          name: 'Gray Jay / Nutcracker',    subtitle: '',                                    points: 2  },
-      { id: 'squirrel',     name: 'Douglas Squirrel / Chipmunk', subtitle: '',                                 points: 1  },
+      { id: 'bear',         name: 'Black Bear',               subtitle: 'Common',                              points: 3,  predator: true },
+      { id: 'marmot',       name: 'Hoary Marmot',             subtitle: 'Alpine',                              points: 3  },
+      { id: 'pika',         name: 'Pika',                     subtitle: 'Alpine',                              points: 3  },
+      { id: 'eagle',        name: 'Bald Eagle',               subtitle: 'Skagit — winter',                     points: 2,  predator: true },
+      { id: 'grayjay',      name: 'Gray Jay',                 subtitle: '',                                    points: 2  },
+      { id: 'nutcracker',   name: "Clark's Nutcracker",       subtitle: '',                                    points: 2  },
+      { id: 'skunk',        name: 'Striped Skunk',            subtitle: '',                                    points: 2,  predator: true },
+      { id: 'snake',        name: 'Snake',                    subtitle: 'Garter — no rattlers here',           points: 2,  predator: true },
+      { id: 'squirrel',     name: 'Douglas Squirrel',         subtitle: '',                                    points: 1  },
+      { id: 'chipmunk',     name: 'Chipmunk',                 subtitle: '',                                    points: 1  },
       { id: 'deer',         name: 'Black-tailed Deer',        subtitle: 'Adults free — babies only',           points: 0  }
     ]
   }
@@ -893,12 +1068,52 @@ function suggestedGoal(parkId, days) {
   return Math.max(5, Math.round(perDay * days / 5) * 5);  // round to a clean multiple of 5
 }
 
-const STORAGE_KEY = 'wildlife-tally-app-v1';
+const STORAGE_KEY = 'wildlife-tally-app-v2';
+const LEGACY_STORAGE_KEY = 'wildlife-tally-app-v1';   // v1 counters — migrated on first load, left in place as backup
 let appState = { trips: {}, nextJournalNum: 1 };
 let currentTripId = null;
 let currentDayIdx = 0;
 let tripSubView = 'tally';
 let formState = null;
+let logForm = null;
+
+// v1 stored aggregate counters ({a, b} per animal per day). v2 stores each
+// sighting as its own ledger entry so per-sighting detail (baby, on-trail,
+// scat, tracks) can exist. Old counters become plain adult/baby 'seen' entries.
+function migrateV1(old) {
+  const state = { trips: {}, nextJournalNum: old.nextJournalNum || 1 };
+  Object.values(old.trips || {}).forEach(v1trip => {
+    const t = deepClone(v1trip);
+    t.modes = { scat: false, tracks: false };
+    t.sightings = [];
+    let seq = 0;
+    const push = (n, animalId, day, age, playerId) => {
+      for (let i = 0; i < n; i++) {
+        t.sightings.push({ id: 'sm-' + t.id + '-' + (seq++), animalId, day, form: 'seen', age, trail: false, playerId: playerId || null, ts: (t.created || 0) + seq });
+      }
+    };
+    if (t.mode === 'versus') {
+      Object.entries(t.playerTallies || {}).forEach(([pid, days]) => {
+        const p = (t.players || []).find(x => x.id === pid);
+        Object.entries(days || {}).forEach(([di, c]) => {
+          push((c && c.a) || 0, p && p.teamAnimalId, parseInt(di, 10), 'adult', pid);
+          push((c && c.b) || 0, p && p.teamAnimalId, parseInt(di, 10), 'baby', pid);
+        });
+      });
+    } else {
+      Object.entries(t.teamTallies || {}).forEach(([aid, days]) => {
+        Object.entries(days || {}).forEach(([di, c]) => {
+          push((c && c.a) || 0, aid, parseInt(di, 10), 'adult');
+          push((c && c.b) || 0, aid, parseInt(di, 10), 'baby');
+        });
+      });
+    }
+    delete t.teamTallies;
+    delete t.playerTallies;
+    state.trips[t.id] = t;
+  });
+  return state;
+}
 
 function loadAppState() {
   try {
@@ -906,6 +1121,15 @@ function loadAppState() {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') appState = Object.assign({ trips: {}, nextJournalNum: 1 }, parsed);
+      return;
+    }
+    const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (legacy) {
+      const parsed = JSON.parse(legacy);
+      if (parsed && typeof parsed === 'object') {
+        appState = migrateV1(parsed);
+        saveAppState();
+      }
     }
   } catch (e) { console.error('load fail', e); }
 }
@@ -1036,6 +1260,7 @@ function initNewTripForm() {
     players: [{ id: newId('p'), name: '', teamAnimalId: PARKS[DEFAULT_PARK].animals[0].id, teamId: 't0' }],
     animals: deepClone(PARKS[DEFAULT_PARK].animals),
     animalEditorOpen: false,
+    modes: { scat: false, tracks: false },
     teamCount: 2,
     teams: [{ id: 't0', name: 'Team 1' }, { id: 't1', name: 'Team 2' }]
   };
@@ -1045,6 +1270,8 @@ function initNewTripForm() {
   document.getElementById('startDate').value = formState.startDate;
   document.getElementById('daysCount').value = formState.daysCount;
   document.getElementById('goalInput').value = formState.goal;
+  document.getElementById('modeScat').checked = formState.modes.scat;
+  document.getElementById('modeTracks').checked = formState.modes.tracks;
   renderFormDynamic();
 }
 
@@ -1188,8 +1415,15 @@ function renderAnimalEditor() {
     <div class="animal-edit-row">
       <input type="text" data-animal-name="${a.id}" value="${escapeHtml(a.name)}" placeholder="Animal name">
       <input type="number" data-animal-points="${a.id}" value="${a.points}" min="0" max="99">
+      <label class="pred-check" title="Predator — scat & tracks score full points"><input type="checkbox" data-animal-pred="${a.id}" ${a.predator ? 'checked' : ''}><span>P</span></label>
       <button type="button" class="remove" data-animal-remove="${a.id}">×</button>
     </div>`).join('');
+  list.querySelectorAll('[data-animal-pred]').forEach(inp => {
+    inp.addEventListener('change', e => {
+      const a = formState.animals.find(x => x.id === e.target.dataset.animalPred);
+      if (a) a.predator = e.target.checked;
+    });
+  });
   list.querySelectorAll('[data-animal-name]').forEach(inp => {
     inp.addEventListener('input', e => {
       const a = formState.animals.find(x => x.id === e.target.dataset.animalName);
@@ -1230,6 +1464,9 @@ document.querySelectorAll('input[name=mode]').forEach(r => {
   r.addEventListener('change', e => { formState.mode = e.target.value; renderFormDynamic(); });
 });
 
+document.getElementById('modeScat').addEventListener('change', e => { formState.modes.scat = e.target.checked; });
+document.getElementById('modeTracks').addEventListener('change', e => { formState.modes.tracks = e.target.checked; });
+
 document.getElementById('startDate').addEventListener('change', e => { formState.startDate = e.target.value || todayISO(); renderFormDynamic(); });
 
 document.getElementById('daysUp').addEventListener('click', () => {
@@ -1263,7 +1500,7 @@ document.getElementById('toggleAnimalEditor').addEventListener('click', () => {
 });
 
 document.getElementById('addAnimalBtn').addEventListener('click', () => {
-  formState.animals.push({ id: newId('a'), name: 'New Animal', subtitle: '', points: 1 });
+  formState.animals.push({ id: newId('a'), name: 'New Animal', subtitle: '', points: 1, predator: false });
   renderAnimalEditor();
   renderAnimalSummary();
   renderVersusPickList();
@@ -1320,16 +1557,11 @@ document.getElementById('startTripBtn').addEventListener('click', () => {
     players: validPlayers.map(p => ({ id: p.id, name: p.name.trim(), teamAnimalId: p.teamAnimalId, teamId: p.teamId })),
     animals: deepClone(formState.animals),
     goal: formState.goal,
-    teamTallies: {},
-    playerTallies: {},
+    modes: { scat: !!formState.modes.scat, tracks: !!formState.modes.tracks },
+    sightings: [],
     created: Date.now(),
     lastModified: Date.now()
   };
-  if (trip.mode === 'team' || trip.mode === 'fantasy') {
-    trip.animals.forEach(a => { trip.teamTallies[a.id] = {}; days.forEach((_, i) => trip.teamTallies[a.id][i] = { a: 0, b: 0 }); });
-  } else {
-    trip.players.forEach(p => { trip.playerTallies[p.id] = {}; days.forEach((_, i) => trip.playerTallies[p.id][i] = { a: 0, b: 0 }); });
-  }
   if (trip.mode === 'fantasy') {
     trip.teams = teams;
     trip.animalOwners = {};   // animalId -> teamId, filled by the draft
@@ -1343,32 +1575,47 @@ document.getElementById('startTripBtn').addEventListener('click', () => {
 });
 
 function babyPts(a) { return a.points + 1; }
-function teamDayTotal(trip, dayIdx) {
-  return trip.animals.reduce((sum, a) => {
-    const t = trip.teamTallies[a.id]?.[dayIdx] || { a: 0, b: 0 };
-    return sum + (t.a * a.points) + (t.b * babyPts(a));
-  }, 0);
-}
-function teamGrandTotal(trip) { return trip.days.reduce((s, _, i) => s + teamDayTotal(trip, i), 0); }
-function versusPlayerDayScore(trip, playerId, dayIdx) {
-  const p = trip.players.find(x => x.id === playerId);
-  const a = trip.animals.find(x => x.id === p?.teamAnimalId);
-  if (!p || !a) return 0;
-  const t = trip.playerTallies[playerId]?.[dayIdx] || { a: 0, b: 0 };
-  return (t.a * a.points) + (t.b * babyPts(a));
-}
-function versusPlayerScore(trip, playerId) { return trip.days.reduce((s, _, i) => s + versusPlayerDayScore(trip, playerId, i), 0); }
+// Scat & track finds: predators score full animal points, everything else half rounded up.
+function scatTrackPts(a) { return a.predator ? a.points : Math.ceil(a.points / 2); }
+function tripModes(trip) { return trip.modes || { scat: false, tracks: false }; }
+function anyModeOn(trip) { const m = tripModes(trip); return !!(m.scat || m.tracks); }
 
-function animalDayPoints(trip, animal, dayIdx) {
-  const t = trip.teamTallies[animal.id]?.[dayIdx] || { a: 0, b: 0 };
-  return (t.a * animal.points) + (t.b * babyPts(animal));
+// Every score in the app derives from the sightings ledger through this one function.
+// Seen: base (baby = +1) plus +1 if spotted while on a trail.
+// Scat / tracks: flat scatTrackPts, no baby or trail modifiers.
+function sightingPoints(trip, s) {
+  const a = trip.animals.find(x => x.id === s.animalId);
+  if (!a) return 0;
+  if (s.form === 'scat' || s.form === 'tracks') return scatTrackPts(a);
+  return (s.age === 'baby' ? babyPts(a) : a.points) + (s.trail ? 1 : 0);
 }
-function animalTotalPoints(trip, animal) { return trip.days.reduce((s, _, i) => s + animalDayPoints(trip, animal, i), 0); }
-function fantasyTeamDayScore(trip, teamId, dayIdx) {
-  return trip.animals.reduce((s, a) => s + (trip.animalOwners[a.id] === teamId ? animalDayPoints(trip, a, dayIdx) : 0), 0);
+
+function tripSightings(trip) { return trip.sightings || []; }
+function sightingsWhere(trip, pred) { return tripSightings(trip).filter(pred); }
+function sumPts(trip, list) { return list.reduce((s, x) => s + sightingPoints(trip, x), 0); }
+
+function teamDayTotal(trip, dayIdx) { return sumPts(trip, sightingsWhere(trip, s => s.day === dayIdx)); }
+function teamGrandTotal(trip) { return sumPts(trip, tripSightings(trip)); }
+function versusPlayerDayScore(trip, playerId, dayIdx) { return sumPts(trip, sightingsWhere(trip, s => s.playerId === playerId && s.day === dayIdx)); }
+function versusPlayerScore(trip, playerId) { return sumPts(trip, sightingsWhere(trip, s => s.playerId === playerId)); }
+function animalDayPoints(trip, animal, dayIdx) { return sumPts(trip, sightingsWhere(trip, s => s.animalId === animal.id && s.day === dayIdx)); }
+function animalTotalPoints(trip, animal) { return sumPts(trip, sightingsWhere(trip, s => s.animalId === animal.id)); }
+function fantasyTeamDayScore(trip, teamId, dayIdx) { return sumPts(trip, sightingsWhere(trip, s => trip.animalOwners[s.animalId] === teamId && s.day === dayIdx)); }
+function fantasyTeamScore(trip, teamId) { return sumPts(trip, sightingsWhere(trip, s => trip.animalOwners[s.animalId] === teamId)); }
+function fantasyDayTotal(trip, dayIdx) { return teamDayTotal(trip, dayIdx); }
+
+// Count breakdown for a set of sightings: seen adults/babies, scat, tracks, points.
+function tallyCounts(trip, list) {
+  const c = { a: 0, b: 0, s: 0, t: 0, n: list.length, pts: 0 };
+  list.forEach(x => {
+    if (x.form === 'scat') c.s++;
+    else if (x.form === 'tracks') c.t++;
+    else if (x.age === 'baby') c.b++;
+    else c.a++;
+    c.pts += sightingPoints(trip, x);
+  });
+  return c;
 }
-function fantasyTeamScore(trip, teamId) { return trip.days.reduce((s, _, i) => s + fantasyTeamDayScore(trip, teamId, i), 0); }
-function fantasyDayTotal(trip, dayIdx) { return trip.animals.reduce((s, a) => s + animalDayPoints(trip, a, dayIdx), 0); }
 
 function renderTrip() {
   const trip = appState.trips[currentTripId];
@@ -1382,9 +1629,11 @@ function renderTrip() {
     return;
   }
   document.getElementById('tripBody').innerHTML =
-    tripSubView === 'summary' ? renderSummary(trip) : renderTallyDay(trip);
+    tripSubView === 'summary' ? renderSummary(trip)
+    : tripSubView === 'totals' ? renderTotals(trip)
+    : renderTallyDay(trip);
   wireTripControls(trip);
-  wireTallyButtons(trip);
+  wireLogControls(trip);
 }
 
 function draftedAnimalIds(trip) { return Object.keys(trip.animalOwners); }
@@ -1502,8 +1751,9 @@ function wireDraft(trip) {
 
 function renderTripToggle() {
   return `
-    <div class="view-toggle">
+    <div class="view-toggle three">
       <button data-subview="tally" class="${tripSubView === 'tally' ? 'active' : ''}">Tally</button>
+      <button data-subview="totals" class="${tripSubView === 'totals' ? 'active' : ''}">Totals</button>
       <button data-subview="summary" class="${tripSubView === 'summary' ? 'active' : ''}">Summary</button>
     </div>`;
 }
@@ -1529,28 +1779,203 @@ function renderTallyDay(trip) {
     : trip.mode === 'fantasy'
       ? renderFantasyCompactStandings(trip)
       : renderVersusCompactStandings(trip);
-  const entry = trip.mode === 'team'
-    ? renderTeamDayEntry(trip, dayIdx)
-    : trip.mode === 'fantasy'
-      ? renderFantasyDayEntry(trip, dayIdx)
-      : renderVersusDayEntry(trip, dayIdx);
   return `
     ${renderTripToggle()}
     ${compact}
     ${renderDayPills(trip)}
     <div class="section-label">Day ${dayIdx + 1} — ${escapeHtml(formatDateShort(trip.days[dayIdx].date))}</div>
-    ${entry}`;
+    ${renderLogCard(trip)}
+    ${renderDayLedger(trip, dayIdx)}`;
 }
 
-function renderBigTally(value, label, key, baby = false) {
-  return `
-    <div class="big-tally-row ${baby ? 'baby' : ''}">
-      <span class="ab-label">${label}</span>
-      <div class="big-ctrls">
-        <button class="big-tally-btn ${value === 0 ? 'disabled' : ''}" data-act="dec" data-key="${key}">−</button>
-        <span class="big-tally-num">${value}</span>
-        <button class="big-tally-btn" data-act="inc" data-key="${key}">+</button>
+// --- Log-a-sighting form ---------------------------------------------------
+// logForm holds the current selections so they survive re-renders; it resets
+// when a different trip is opened. In Pick-an-Animal mode the animal comes
+// from the chosen spotter, so the dropdown lists players instead.
+
+function ensureLogForm(trip) {
+  if (!logForm || logForm.tripId !== trip.id) {
+    logForm = {
+      tripId: trip.id,
+      animalId: trip.animals[0] ? trip.animals[0].id : null,
+      playerId: trip.players[0] ? trip.players[0].id : null,
+      form: 'seen',
+      age: 'adult',
+      trail: false
+    };
+  }
+  const m = tripModes(trip);
+  if ((logForm.form === 'scat' && !m.scat) || (logForm.form === 'tracks' && !m.tracks)) logForm.form = 'seen';
+  return logForm;
+}
+
+function logFormAnimal(trip, lf) {
+  if (trip.mode === 'versus') {
+    const p = trip.players.find(x => x.id === lf.playerId);
+    return trip.animals.find(x => x.id === (p && p.teamAnimalId)) || null;
+  }
+  return trip.animals.find(x => x.id === lf.animalId) || null;
+}
+
+function renderLogCard(trip) {
+  const lf = ensureLogForm(trip);
+  const m = tripModes(trip);
+  const a = logFormAnimal(trip, lf);
+  const seen = lf.form === 'seen';
+  const who = trip.mode === 'versus' ? `
+    <label class="field">
+      <span class="label">Spotter</span>
+      <select id="logPlayer">
+        ${trip.players.map(p => {
+          const pa = trip.animals.find(x => x.id === p.teamAnimalId);
+          return `<option value="${p.id}" ${lf.playerId === p.id ? 'selected' : ''}>${escapeHtml(p.name)} — ${escapeHtml(pa ? pa.name : '—')}</option>`;
+        }).join('')}
+      </select>
+    </label>` : `
+    <label class="field">
+      <span class="label">Animal</span>
+      <select id="logAnimal">
+        ${trip.animals.map(x => `<option value="${x.id}" ${lf.animalId === x.id ? 'selected' : ''}>${escapeHtml(x.name)} — ${x.points} pts</option>`).join('')}
+      </select>
+    </label>`;
+  const kindSeg = anyModeOn(trip) ? `
+    <div class="seg" id="logKind">
+      <button type="button" data-kind="seen" class="${seen ? 'active' : ''}">Seen</button>
+      ${m.scat ? `<button type="button" data-kind="scat" class="${lf.form === 'scat' ? 'active' : ''}">Scat</button>` : ''}
+      ${m.tracks ? `<button type="button" data-kind="tracks" class="${lf.form === 'tracks' ? 'active' : ''}">Tracks</button>` : ''}
+    </div>` : '';
+  const detail = seen ? `
+    <div class="seg-row">
+      <div class="seg" id="logAge">
+        <button type="button" data-age="adult" class="${lf.age === 'adult' ? 'active' : ''}">Adult${a ? ' · ' + a.points : ''}</button>
+        <button type="button" data-age="baby" class="${lf.age === 'baby' ? 'active baby' : ''}">Baby${a ? ' · ' + babyPts(a) : ''}</button>
       </div>
+      <button type="button" id="logTrail" class="trail-pill ${lf.trail ? 'on' : ''}">On Trail +1</button>
+    </div>` : `
+    <div class="scat-note">${lf.form === 'scat' ? 'Scat find' : 'Track find'}${a ? ` — ${a.predator ? 'predator, full points' : 'half points, rounded up'}` : ''}</div>`;
+  const pts = a ? sightingPoints(trip, { animalId: a.id, form: lf.form, age: lf.age, trail: lf.trail }) : 0;
+  return `
+    <div class="log-card">
+      ${who}
+      ${kindSeg}
+      ${detail}
+      <button type="button" class="primary-btn log-btn" id="logSubmit">✚ Log It — ${pts} pt${pts === 1 ? '' : 's'}</button>
+    </div>`;
+}
+
+function sightingBadges(s) {
+  if (s.form === 'scat') return '<span class="pt-badge high">SCAT</span>';
+  if (s.form === 'tracks') return '<span class="pt-badge high">TRACKS</span>';
+  let b = '';
+  if (s.age === 'baby') b += '<span class="pt-badge baby">BABY</span>';
+  if (s.trail) b += '<span class="pt-badge">TRAIL +1</span>';
+  return b;
+}
+
+function renderDayLedger(trip, dayIdx) {
+  const entries = sightingsWhere(trip, s => s.day === dayIdx).sort((x, y) => (y.ts || 0) - (x.ts || 0));
+  if (!entries.length) return `<div class="ledger-empty">Nothing logged this day yet.<br>Pick an animal above and log the first sighting.</div>`;
+  const rows = entries.map(s => {
+    const a = trip.animals.find(x => x.id === s.animalId);
+    const p = s.playerId ? trip.players.find(x => x.id === s.playerId) : null;
+    return `
+      <div class="ledger-row">
+        <div class="l-main">
+          <span class="l-name">${escapeHtml(a ? a.name : '—')}</span>
+          ${p ? `<span class="l-who">${escapeHtml(p.name)}</span>` : ''}
+          <span class="l-badges">${sightingBadges(s)}</span>
+        </div>
+        <div class="l-pts">${sightingPoints(trip, s)}</div>
+        <button type="button" class="l-del" data-del-sighting="${s.id}" aria-label="Remove entry">×</button>
+      </div>`;
+  }).join('');
+  return `
+    <div class="section-label">Day Ledger — ${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}</div>
+    <div class="ledger">${rows}</div>`;
+}
+
+function logSighting(trip) {
+  const lf = ensureLogForm(trip);
+  const a = logFormAnimal(trip, lf);
+  if (!a) return;
+  trip.sightings.push({
+    id: newId('s'),
+    animalId: a.id,
+    day: currentDayIdx,
+    form: lf.form,
+    age: lf.form === 'seen' ? lf.age : 'adult',
+    trail: lf.form === 'seen' ? lf.trail : false,
+    playerId: trip.mode === 'versus' ? lf.playerId : null,
+    ts: Date.now()
+  });
+  trip.lastModified = Date.now();
+  saveAppState();
+  renderTrip();
+}
+
+function wireLogControls(trip) {
+  const lf = logForm;
+  const animalSel = document.getElementById('logAnimal');
+  if (animalSel) animalSel.addEventListener('change', e => { lf.animalId = e.target.value; renderTrip(); });
+  const playerSel = document.getElementById('logPlayer');
+  if (playerSel) playerSel.addEventListener('change', e => { lf.playerId = e.target.value; renderTrip(); });
+  document.querySelectorAll('#logKind [data-kind]').forEach(b => b.addEventListener('click', e => { lf.form = e.currentTarget.dataset.kind; renderTrip(); }));
+  document.querySelectorAll('#logAge [data-age]').forEach(b => b.addEventListener('click', e => { lf.age = e.currentTarget.dataset.age; renderTrip(); }));
+  const trail = document.getElementById('logTrail');
+  if (trail) trail.addEventListener('click', () => { lf.trail = !lf.trail; renderTrip(); });
+  const submit = document.getElementById('logSubmit');
+  if (submit) submit.addEventListener('click', () => logSighting(trip));
+  document.querySelectorAll('[data-del-sighting]').forEach(b => b.addEventListener('click', e => {
+    trip.sightings = tripSightings(trip).filter(s => s.id !== e.currentTarget.dataset.delSighting);
+    trip.lastModified = Date.now();
+    saveAppState();
+    renderTrip();
+  }));
+}
+
+// --- Trip totals -----------------------------------------------------------
+
+function renderTotals(trip) {
+  const m = tripModes(trip);
+  const grand = tallyCounts(trip, tripSightings(trip));
+  const rows = trip.animals.map(a => ({ a, c: tallyCounts(trip, sightingsWhere(trip, s => s.animalId === a.id)) }));
+  const active = rows.filter(r => r.c.n > 0).sort((x, y) => y.c.pts - x.c.pts || y.c.n - x.c.n);
+  const quiet = rows.filter(r => r.c.n === 0);
+  const cols = `grid-template-columns: minmax(110px, 1.4fr) repeat(${2 + (m.scat ? 1 : 0) + (m.tracks ? 1 : 0)}, minmax(46px, 1fr));`;
+  const header = `
+    <div class="totals-head" style="${cols}">
+      <div class="th creature">Creature</div><div class="th">Seen</div>${m.scat ? '<div class="th">Scat</div>' : ''}${m.tracks ? '<div class="th">Tracks</div>' : ''}<div class="th">Pts</div>
+    </div>`;
+  const rowHtml = r => `
+    <div class="totals-row ${r.c.n === 0 ? 'quiet' : ''}" style="${cols}">
+      <div class="creature">
+        <div class="animal-name">${escapeHtml(r.a.name)}</div>
+        <div class="pts-row"><span class="pt-badge ${tierClass(r.a.points)}">${r.a.points} PTS</span></div>
+      </div>
+      <div class="tn">${r.c.a + r.c.b}${r.c.b ? `<small>${r.c.a} A · ${r.c.b} B</small>` : ''}</div>
+      ${m.scat ? `<div class="tn">${r.c.s}</div>` : ''}
+      ${m.tracks ? `<div class="tn">${r.c.t}</div>` : ''}
+      <div class="tn pts">${r.c.pts}</div>
+    </div>`;
+  return `
+    ${renderTripToggle()}
+    <div class="scorecard">
+      <div class="score-display">
+        <div>
+          <div class="score-label">Trip Total</div>
+          <div class="score-value">${grand.pts}<span class="total-of"> pts</span></div>
+        </div>
+        <div>
+          <div class="score-label" style="text-align:right;">Animals Seen</div>
+          <div class="score-value" style="text-align:right;">${grand.a + grand.b}</div>
+        </div>
+      </div>
+      ${anyModeOn(trip) ? `<div class="sign-line">${m.scat ? `Scat finds: ${grand.s}` : ''}${m.scat && m.tracks ? ' · ' : ''}${m.tracks ? `Track finds: ${grand.t}` : ''}</div>` : ''}
+    </div>
+    <div class="totals-wrap">
+      ${header}
+      ${active.map(rowHtml).join('') || ''}
+      ${quiet.length ? `<div class="totals-quiet-label">Not yet spotted</div>${quiet.map(rowHtml).join('')}` : ''}
     </div>`;
 }
 
@@ -1575,28 +2000,6 @@ function renderTeamCompactTotal(trip, dayIdx) {
     </div>`;
 }
 
-function renderTeamDayEntry(trip, dayIdx) {
-  return trip.animals.map(a => {
-    const t = trip.teamTallies[a.id]?.[dayIdx] || { a: 0, b: 0 };
-    const tier = tierClass(a.points);
-    return `
-      <div class="tally-day-card">
-        <div class="animal-head">
-          <div>
-            <div class="animal-name">${escapeHtml(a.name)}</div>
-            ${a.subtitle ? `<div class="animal-sub">${escapeHtml(a.subtitle)}</div>` : ''}
-          </div>
-          <div class="pts-row">
-            <span class="pt-badge ${tier}">${a.points} PTS</span>
-            <span class="pt-badge baby">BABY ${babyPts(a)}</span>
-          </div>
-        </div>
-        ${renderBigTally(t.a, 'Adult', `team:${a.id}:${dayIdx}:a`)}
-        ${renderBigTally(t.b, 'Baby', `team:${a.id}:${dayIdx}:b`, true)}
-      </div>`;
-  }).join('');
-}
-
 function renderVersusCompactStandings(trip) {
   const scored = trip.players.map(p => ({ player: p, score: versusPlayerScore(trip, p.id) }));
   scored.sort((a, b) => b.score - a.score);
@@ -1615,34 +2018,6 @@ function renderVersusCompactStandings(trip) {
     }).join('')}</div>`;
 }
 
-function renderVersusDayEntry(trip, dayIdx) {
-  return trip.players.map(p => {
-    const a = trip.animals.find(x => x.id === p.teamAnimalId);
-    if (!a) return '';
-    const tier = tierClass(a.points);
-    const t = trip.playerTallies[p.id]?.[dayIdx] || { a: 0, b: 0 };
-    const dayScore = versusPlayerDayScore(trip, p.id, dayIdx);
-    const total = versusPlayerScore(trip, p.id);
-    return `
-      <div class="tally-day-card">
-        <div class="animal-head">
-          <div>
-            <div class="animal-name">${escapeHtml(p.name)}</div>
-            <div class="team">Team ${escapeHtml(a.name)}</div>
-            <div class="pts-row" style="margin-top:6px;">
-              <span class="pt-badge ${tier}">${a.points} PTS</span>
-              <span class="pt-badge baby">BABY ${babyPts(a)}</span>
-            </div>
-          </div>
-          <div class="player-score">${total}<small>total</small></div>
-        </div>
-        ${renderBigTally(t.a, 'Adult', `versus:${p.id}:${dayIdx}:a`)}
-        ${renderBigTally(t.b, 'Baby', `versus:${p.id}:${dayIdx}:b`, true)}
-        <div class="day-score-line">This day: ${dayScore} pts</div>
-      </div>`;
-  }).join('');
-}
-
 function renderFantasyCompactStandings(trip) {
   const scored = trip.teams.map(t => ({ team: t, score: fantasyTeamScore(trip, t.id) }));
   scored.sort((a, b) => b.score - a.score);
@@ -1659,32 +2034,6 @@ function renderFantasyCompactStandings(trip) {
           <div class="score">${s.score}<small> pts</small></div>
         </div>`;
     }).join('')}</div>`;
-}
-
-function renderFantasyDayEntry(trip, dayIdx) {
-  return trip.animals.map(a => {
-    const t = trip.teamTallies[a.id]?.[dayIdx] || { a: 0, b: 0 };
-    const tier = tierClass(a.points);
-    const ownerId = trip.animalOwners[a.id];
-    const owner = trip.teams.find(x => x.id === ownerId);
-    const cIdx = teamColorIndex(trip, ownerId);
-    return `
-      <div class="tally-day-card">
-        <div class="animal-head">
-          <div>
-            <div class="animal-name">${escapeHtml(a.name)}</div>
-            ${a.subtitle ? `<div class="animal-sub">${escapeHtml(a.subtitle)}</div>` : ''}
-            <span class="owner-tag ${teamColorClass(cIdx)}">${escapeHtml(owner ? owner.name : '—')}</span>
-          </div>
-          <div class="pts-row">
-            <span class="pt-badge ${tier}">${a.points} PTS</span>
-            <span class="pt-badge baby">BABY ${babyPts(a)}</span>
-          </div>
-        </div>
-        ${renderBigTally(t.a, 'Adult', `team:${a.id}:${dayIdx}:a`)}
-        ${renderBigTally(t.b, 'Baby', `team:${a.id}:${dayIdx}:b`, true)}
-      </div>`;
-  }).join('');
 }
 
 function renderFantasySummary(trip) {
@@ -1708,14 +2057,14 @@ function renderFantasySummary(trip) {
     const owned = trip.animals.filter(a => trip.animalOwners[a.id] === t.id)
       .sort((a, b) => animalTotalPoints(trip, b) - animalTotalPoints(trip, a));
     const rows = owned.map(a => {
-      const pts = animalTotalPoints(trip, a);
-      const counts = trip.days.reduce((acc, _, i) => { const tt = trip.teamTallies[a.id]?.[i] || { a: 0, b: 0 }; acc.a += tt.a; acc.b += tt.b; return acc; }, { a: 0, b: 0 });
+      const c = tallyCounts(trip, sightingsWhere(trip, s => s.animalId === a.id));
       return `
         <div class="day-tally-row">
           <div class="date-label">${escapeHtml(a.name)}</div>
-          <div class="ab-block"><span class="lbl">A</span><span class="tally-num">${counts.a}</span></div>
-          <div class="ab-block b"><span class="lbl">B</span><span class="tally-num">${counts.b}</span></div>
-          <div class="day-score">${pts}</div>
+          <div class="ab-block"><span class="lbl">A</span><span class="tally-num">${c.a}</span></div>
+          <div class="ab-block b"><span class="lbl">B</span><span class="tally-num">${c.b}</span></div>
+          ${anyModeOn(trip) ? `<div class="ab-block"><span class="lbl">S·T</span><span class="tally-num">${c.s + c.t}</span></div>` : ''}
+          <div class="day-score">${c.pts}</div>
         </div>`;
     }).join('');
     return `
@@ -1760,6 +2109,7 @@ function renderFantasySummary(trip) {
         <li>Must be inside park boundaries to count.</li>
         <li>Each animal scores for the team that drafted it.</li>
         <li>A = adult · B = baby · babies always +1 over adult.</li>
+        ${modeRuleItems(trip)}
         <li>Anyone can log a sighting — points route to the owning team.</li>
       </ul>
     </div>`;
@@ -1817,21 +2167,31 @@ function renderTeamSummary(trip) {
       <ul>
         <li>Must be inside park boundaries to count.</li>
         <li>A = adult · B = baby · babies always +1 over adult.</li>
-        <li>Group sightings stack (e.g. otter + beaver same day = 2 tallies).</li>
+        ${modeRuleItems(trip)}
+        <li>Group sightings stack (e.g. otter + beaver same day = 2 entries).</li>
         <li>Players: ${escapeHtml(trip.players.map(p => p.name).join(', '))}.</li>
       </ul>
     </div>`;
 }
 
 function renderTeamSummaryCell(trip, animal, dayIdx) {
-  const t = trip.teamTallies[animal.id]?.[dayIdx] || { a: 0, b: 0 };
-  const pts = (t.a * animal.points) + (t.b * babyPts(animal));
+  const c = tallyCounts(trip, sightingsWhere(trip, s => s.animalId === animal.id && s.day === dayIdx));
   return `
     <div class="day-cell ro">
-      <div class="ro-line"><span class="ab">A</span><span class="ro-n">${t.a}</span></div>
-      <div class="ro-line baby"><span class="ab">B</span><span class="ro-n">${t.b}</span></div>
-      <div class="ro-pts">${pts}</div>
+      <div class="ro-line"><span class="ab">A</span><span class="ro-n">${c.a}</span></div>
+      <div class="ro-line baby"><span class="ab">B</span><span class="ro-n">${c.b}</span></div>
+      ${anyModeOn(trip) ? `<div class="ro-line"><span class="ab">S·T</span><span class="ro-n">${c.s + c.t}</span></div>` : ''}
+      <div class="ro-pts">${c.pts}</div>
     </div>`;
+}
+
+// Shared field-rule lines for the new scoring rules.
+function modeRuleItems(trip) {
+  const m = tripModes(trip);
+  let h = '<li>Spotted while on a trail = +1 point.</li>';
+  if (m.scat) h += '<li>Scat finds count — predators full points, others half (rounded up).</li>';
+  if (m.tracks) h += '<li>Track finds count — predators full points, others half (rounded up).</li>';
+  return h;
 }
 
 function renderVersusSummary(trip) {
@@ -1855,14 +2215,14 @@ function renderVersusSummary(trip) {
     const t = tierClass(a.points);
     const total = versusPlayerScore(trip, p.id);
     const dayRows = trip.days.map((d, i) => {
-      const tally = trip.playerTallies[p.id]?.[i] || { a: 0, b: 0 };
-      const dayScore = versusPlayerDayScore(trip, p.id, i);
+      const c = tallyCounts(trip, sightingsWhere(trip, s => s.playerId === p.id && s.day === i));
       return `
         <div class="day-tally-row">
           <div class="date-label">${escapeHtml(formatDateShort(d.date))}</div>
-          <div class="ab-block"><span class="lbl">A</span><span class="tally-num">${tally.a}</span></div>
-          <div class="ab-block b"><span class="lbl">B</span><span class="tally-num">${tally.b}</span></div>
-          <div class="day-score">${dayScore}</div>
+          <div class="ab-block"><span class="lbl">A</span><span class="tally-num">${c.a}</span></div>
+          <div class="ab-block b"><span class="lbl">B</span><span class="tally-num">${c.b}</span></div>
+          ${anyModeOn(trip) ? `<div class="ab-block"><span class="lbl">S·T</span><span class="tally-num">${c.s + c.t}</span></div>` : ''}
+          <div class="day-score">${c.pts}</div>
         </div>`;
     }).join('');
     return `
@@ -1890,6 +2250,7 @@ function renderVersusSummary(trip) {
         <li>Must be inside park boundaries to count.</li>
         <li>You only score for sightings of your animal team.</li>
         <li>A = adult · B = baby · babies always +1 over adult.</li>
+        ${modeRuleItems(trip)}
       </ul>
     </div>`;
 }
@@ -1901,28 +2262,6 @@ function wireTripControls(trip) {
   document.querySelectorAll('[data-day]').forEach(btn => {
     btn.addEventListener('click', e => { currentDayIdx = parseInt(e.currentTarget.dataset.day, 10); renderTrip(); });
   });
-}
-
-function wireTallyButtons(trip) {
-  document.querySelectorAll('[data-act]').forEach(btn => {
-    btn.addEventListener('click', e => {
-      const { act, key } = e.currentTarget.dataset;
-      handleTallyChange(trip, act, key);
-    });
-  });
-}
-
-function handleTallyChange(trip, act, key) {
-  const parts = key.split(':');
-  const kind = parts[0];
-  const dayIdx = parseInt(parts[2], 10);
-  const type = parts[3];
-  const bucket = kind === 'team' ? trip.teamTallies[parts[1]][dayIdx] : trip.playerTallies[parts[1]][dayIdx];
-  if (act === 'inc') bucket[type]++;
-  else if (act === 'dec') bucket[type] = Math.max(0, bucket[type] - 1);
-  trip.lastModified = Date.now();
-  saveAppState();
-  renderTrip();
 }
 
 document.getElementById('deleteTripBtn').addEventListener('click', () => {
